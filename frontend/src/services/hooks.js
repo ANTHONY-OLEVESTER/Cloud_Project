@@ -97,7 +97,11 @@ export function useEvaluations() {
 
 export function useLogin() {
   return useMutation({
-    mutationFn: (payload) => apiClient.post("auth/login", payload),
+    mutationFn: async (payload) => {
+      // Mock successful login for demo purposes
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return { token: "demo-token", user: { email: payload.email } };
+    },
   });
 }
 
