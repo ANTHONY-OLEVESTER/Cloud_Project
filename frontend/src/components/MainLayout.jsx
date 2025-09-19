@@ -58,6 +58,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const { data: notifications = [] } = useNotifications();
   const markNotificationRead = useMarkNotificationRead();
@@ -84,6 +85,30 @@ export default function MainLayout() {
     } else if (notification.type === 'build_complete') {
       navigate('/');
     }
+  };
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    // Simple search logic - navigate to relevant pages based on search terms
+    const query = searchQuery.toLowerCase();
+    
+    if (query.includes('aws') || query.includes('azure') || query.includes('gcp') || query.includes('provider') || query.includes('connection')) {
+      navigate('/connections');
+    } else if (query.includes('policy') || query.includes('policies') || query.includes('compliance') || query.includes('rule')) {
+      navigate('/policies');
+    } else if (query.includes('report') || query.includes('analytics') || query.includes('dashboard') || query.includes('score')) {
+      navigate('/reports');
+    } else if (query.includes('setting') || query.includes('config') || query.includes('account') || query.includes('profile')) {
+      navigate('/settings');
+    } else {
+      // Default to dashboard for general searches
+      navigate('/');
+    }
+    
+    // Clear search after navigation
+    setSearchQuery("");
   };
 
   return (
@@ -121,11 +146,16 @@ export default function MainLayout() {
       </aside>
       <div className="main-area">
         <header className="topbar">
-          <form className="topbar__search" role="search">
+          <form className="topbar__search" role="search" onSubmit={handleSearch}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M10.5 3a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 3.9 9.4l3.57 3.56a1 1 0 0 0 1.42-1.42l-3.56-3.57A5.5 5.5 0 0 0 10.5 5Z" />
             </svg>
-            <input placeholder="Search policies, alerts..." aria-label="Search" />
+            <input 
+              placeholder="Search policies, alerts, providers..." 
+              aria-label="Search" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </form>
           <div className="topbar__right">
             <ThemeSwitcher />
