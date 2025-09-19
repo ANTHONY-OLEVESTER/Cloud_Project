@@ -115,6 +115,17 @@ export function useNotifications() {
   });
 }
 
+export function useCreateNotification() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => apiClient.post("notifications", payload),
+    onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
+    onError: (error) => {
+      console.error('Failed to create notification', error);
+    },
+  });
+}
+
 export function useMarkNotificationRead() {
   const client = useQueryClient();
   return useMutation({

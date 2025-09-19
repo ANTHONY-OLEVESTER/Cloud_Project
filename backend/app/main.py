@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import crud
 from app.config import settings
 from app.database import Base, SessionLocal, engine
-from app.routers import accounts, auth, dashboard, policies
+from app.routers import accounts, auth, dashboard, notifications, policies
 from app.security import PasswordManager
 from app.seed import demo_records
 
@@ -22,11 +22,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-for router in (auth.router, accounts.router, policies.router, dashboard.router):
+for router in (auth.router, accounts.router, policies.router, dashboard.router, notifications.router):
     app.include_router(router)
 
 api_router = APIRouter(prefix="/api")
-for router in (auth.router, accounts.router, policies.router, dashboard.router):
+for router in (auth.router, accounts.router, policies.router, dashboard.router, notifications.router):
     api_router.include_router(router)
 app.include_router(api_router)
 

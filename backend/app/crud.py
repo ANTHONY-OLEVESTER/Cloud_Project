@@ -207,6 +207,42 @@ def build_dashboard_snapshot(db: Session) -> schemas.DashboardSnapshot:
     return schemas.DashboardSnapshot(summary=summary, providers=providers)
 
 
+# -- Notification helpers ----------------------------------------------------
+def list_notifications(db: Session) -> list[models.Notification]:
+    stmt = select(models.Notification).order_by(models.Notification.created_at.desc())
+    return list(db.execute(stmt).scalars())
+
+
+def create_notification(db: Session, payload: schemas.NotificationCreate) -> models.Notification:
+    notification = models.Notification(**payload.model_dump())
+    db.add(notification)
+    db.commit()
+    db.refresh(notification)
+    return notification
+
+
+def mark_notification_read(db: Session, notification_id: int) -> Optional[models.Notification]:
+    stmt = select(models.Notification).where(models.Notification.id == notification_id)
+    notification = db.execute(stmt).scalar_one_or_none()
+    if not notification:
+        return None
+
+    notification.is_read = True
+    db.commit()
+    db.refresh(notification)
+    return notification
+
+
+def mark_all_notifications_read(db: Session) -> int:
+    stmt = select(models.Notification).where(models.Notification.is_read.is_(False))
+    unread = list(db.execute(stmt).scalars())
+    for notification in unread:
+        notification.is_read = True
+    if unread:
+        db.commit()
+    return len(unread)
+
+
 # -- Utility helpers ---------------------------------------------------------
 def seed_demo_data(db: Session, *, dataset: Iterable[dict]) -> None:
     for record in dataset:
