@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
+from datetime import datetime, timedelta
+
 from sqlalchemy import case, func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
@@ -44,9 +46,49 @@ def create_account(db: Session, account_in: schemas.AccountCreate) -> models.Clo
     return account
 
 
+def log_account_provisioning(db: Session, account: models.CloudAccount) -> None:
+    """Create a cascade of provisioning notifications for a new account."""
+
+    steps = [
+        (
+            "Initializing secure workspace",
+            f"Preparing guardrails for {account.display_name} ({account.provider.value.upper()})",
+        ),
+        (
+            "Building connectors",
+            "Linking IAM roles, service principals, and API integrations",
+        ),
+        (
+            "Deploying baseline policies",
+            "Activating 25 critical controls and monitoring rules",
+        ),
+        (
+            "Provisioning complete",
+            "{name} is ready to ingest findings".format(name=account.display_name),
+        ),
+    ]
+
+    now = datetime.utcnow()
+    for index, (title, message) in enumerate(steps):
+        notification = models.Notification(
+            title=title,
+            message=message,
+            type=models.NotificationType.PROVISIONING,
+            created_at=now + timedelta(seconds=index * 2),
+        )
+        db.add(notification)
+
+    db.commit()
+
+
 def get_accounts(db: Session) -> list[models.CloudAccount]:
     stmt = select(models.CloudAccount).order_by(models.CloudAccount.created_at.desc())
     return list(db.execute(stmt).scalars())
+
+
+def get_account(db: Session, account_id: int) -> Optional[models.CloudAccount]:
+    stmt = select(models.CloudAccount).where(models.CloudAccount.id == account_id)
+    return db.execute(stmt).scalar_one_or_none()
 
 
 def update_account(db: Session, account_id: int, account_in: schemas.AccountUpdate) -> Optional[models.CloudAccount]:
@@ -205,6 +247,42 @@ def build_dashboard_snapshot(db: Session) -> schemas.DashboardSnapshot:
         )
 
     return schemas.DashboardSnapshot(summary=summary, providers=providers)
+
+
+# -- Notification helpers ----------------------------------------------------
+def create_notification(db: Session, notification_in: schemas.NotificationCreate) -> models.Notification:
+    notification = models.Notification(**notification_in.model_dump())
+    db.add(notification)
+    db.commit()
+    db.refresh(notification)
+    return notification
+
+
+def get_notifications(db: Session) -> list[models.Notification]:
+    stmt = select(models.Notification).order_by(models.Notification.created_at.desc())
+    return list(db.execute(stmt).scalars())
+
+
+def mark_notification_read(db: Session, notification_id: int) -> Optional[models.Notification]:
+    stmt = select(models.Notification).where(models.Notification.id == notification_id)
+    notification = db.execute(stmt).scalar_one_or_none()
+    if not notification:
+        return None
+    if not notification.is_read:
+        notification.is_read = True
+        db.commit()
+        db.refresh(notification)
+    return notification
+
+
+def mark_all_notifications_read(db: Session) -> int:
+    stmt = select(models.Notification).where(models.Notification.is_read.is_(False))
+    unread = list(db.execute(stmt).scalars())
+    for notification in unread:
+        notification.is_read = True
+    if unread:
+        db.commit()
+    return len(unread)
 
 
 # -- Utility helpers ---------------------------------------------------------

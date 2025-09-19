@@ -1,0 +1,26 @@
+<svg width="360" height="220" viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cloud connections illustration">
+  <defs>
+    <linearGradient id="connections-base" x1="32" y1="28" x2="328" y2="196" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#6366F1"/>
+    </linearGradient>
+    <linearGradient id="connections-cloud" x1="100" y1="72" x2="280" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F8FAFC" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#E0F2FE" stop-opacity="0.8"/>
+    </linearGradient>
+  </defs>
+  <rect x="18" y="26" width="324" height="168" rx="36" fill="url(#connections-base)"/>
+  <g opacity="0.88">
+    <path d="M96 144C72 142 56 128 56 112C56 92 76 78 100 84C110 68 130 58 152 60C176 62 196 78 202 98C222 96 242 106 248 122C258 118 270 120 278 128C290 138 292 156 282 168C272 182 254 186 238 178H140C120 178 104 162 104 142C104 142 102 144 96 144Z" fill="url(#connections-cloud)"/>
+  </g>
+  <circle cx="116" cy="110" r="16" fill="#0F172A" fill-opacity="0.24"/>
+  <circle cx="116" cy="110" r="8" fill="#F8FAFC"/>
+  <circle cx="184" cy="106" r="12" fill="#0F172A" fill-opacity="0.24"/>
+  <circle cx="184" cy="106" r="6" fill="#F8FAFC"/>
+  <circle cx="248" cy="132" r="18" fill="#0F172A" fill-opacity="0.24"/>
+  <circle cx="248" cy="132" r="9" fill="#F8FAFC"/>
+  <path d="M116 110H184" stroke="#F8FAFC" stroke-opacity="0.6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M185 108L244 128" stroke="#F8FAFC" stroke-opacity="0.6" stroke-width="4" stroke-linecap="round"/>
+  <rect x="78" y="166" width="48" height="6" rx="3" fill="rgba(255,255,255,0.55)"/>
+  <rect x="220" y="166" width="62" height="6" rx="3" fill="rgba(15,23,42,0.25)"/>
+</svg>
