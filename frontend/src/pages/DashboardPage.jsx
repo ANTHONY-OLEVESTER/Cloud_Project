@@ -1,6 +1,9 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useDashboard, useEvaluations, usePolicies } from "../services/hooks";
+import PageHero from "../components/PageHero";
+import dashboardIllustration from "../assets/illustrations/dashboard-hero.svg";
 
 const TREND_TEMPLATE = [82, 84, 83, 85, 86, 88, 87, 89];
 const VIOLATION_TEMPLATE = [40, 38, 37, 34, 32, 30, 28, 26];
@@ -15,6 +18,7 @@ function buildPieGradient(compliant, nonCompliant, pending) {
 }
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const {
     data: summary,
     isLoading: summaryLoading,
@@ -95,22 +99,24 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>Security Dashboard</h1>
-          <p>Monitor your cloud security posture across all connected providers.</p>
-        </div>
-        <div className="page-header__actions">
-          <span className="pill pill--success">Last updated: 5 minutes ago</span>
-          <button
-            className="button button--secondary"
-            type="button"
-            onClick={handleGenerateReport}
-          >
-            Generate report
-          </button>
-        </div>
-      </div>
+      <PageHero
+        title="Security Dashboard"
+        subtitle="Monitor your cloud security posture across all connected providers."
+        badge="Security overview"
+        illustration={dashboardIllustration}
+        actions={(
+          <>
+            <span className="pill pill--success">Last updated: 5 minutes ago</span>
+            <button
+              className="button button--secondary"
+              type="button"
+              onClick={handleGenerateReport}
+            >
+              Generate report
+            </button>
+          </>
+        )}
+      />
 
       <section className="stat-grid">
         <StatCard
@@ -175,7 +181,12 @@ export default function DashboardPage() {
         <div className="card__title">Cloud provider status</div>
         <div style={{ display: "grid", gap: "16px" }}>
           {providerBreakdown.map((provider) => (
-            <div key={provider.provider} className="connection-card">
+            <button
+              key={provider.provider}
+              type="button"
+              className="connection-card connection-card--link"
+              onClick={() => navigate(`/services/${provider.provider}`)}
+            >
               <div className="connection-card__icon">
                 <ProviderIcon provider={provider.provider} />
               </div>
@@ -194,7 +205,7 @@ export default function DashboardPage() {
                   <strong>{provider.unknown}</strong> pending
                 </span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </section>

@@ -1,9 +1,10 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import AuthHero from "../components/AuthHero";
 import { useAuth } from "../context/AuthContext";
 import { useSignup } from "../services/hooks";
+import { runAppTransition } from "../lib/transitions";
 import "../modern-auth.css";
 
 const HERO_IMAGE =
@@ -49,7 +50,7 @@ export default function SignupPage() {
         onSuccess: (response) => {
           const token = response?.token ?? "demo-token";
           setAuthToken(token);
-          navigate("/", { replace: true });
+          runAppTransition("enter", () => navigate("/", { replace: true }));
         },
         onError: (err) => {
           const detail = extractErrorMessage(err);

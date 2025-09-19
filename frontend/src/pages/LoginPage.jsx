@@ -1,9 +1,10 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import AuthHero from "../components/AuthHero";
 import { useAuth } from "../context/AuthContext";
 import { useLogin } from "../services/hooks";
+import { runAppTransition } from "../lib/transitions";
 import "../modern-auth.css";
 
 const HERO_IMAGE =
@@ -34,7 +35,7 @@ export default function LoginPage() {
           const token = response?.token ?? "demo-token";
           setAuthToken(token);
           const redirectTo = location.state?.from?.pathname ?? "/";
-          navigate(redirectTo, { replace: true });
+          runAppTransition("enter", () => navigate(redirectTo, { replace: true }));
         },
         onError: (err) => {
           const detail = extractErrorMessage(err);

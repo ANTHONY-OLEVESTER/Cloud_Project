@@ -115,11 +115,34 @@ export function useNotifications() {
   });
 }
 
+export function useCreateNotification() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (payload) => apiClient.post("notifications", payload),
+    onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
+  });
+}
+
 export function useMarkNotificationRead() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (notificationId) => apiClient.patch(`notifications/${notificationId}/read`),
-    onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
+    onMutate: async (notificationId) => {
+      await client.cancelQueries({ queryKey: queryKeys.notifications });
+      const previous = client.getQueryData(queryKeys.notifications);
+      client.setQueryData(queryKeys.notifications, (data = []) =>
+        data.map((item) =>
+          item.id === notificationId ? { ...item, is_read: true } : item
+        )
+      );
+      return { previous };
+    },
+    onError: (_error, _notificationId, context) => {
+      if (context?.previous) {
+        client.setQueryData(queryKeys.notifications, context.previous);
+      }
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
   });
 }
 
@@ -127,6 +150,19 @@ export function useMarkAllNotificationsRead() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: () => apiClient.patch("notifications/mark-all-read"),
-    onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
+    onMutate: async () => {
+      await client.cancelQueries({ queryKey: queryKeys.notifications });
+      const previous = client.getQueryData(queryKeys.notifications);
+      client.setQueryData(queryKeys.notifications, (data = []) =>
+        data.map((item) => ({ ...item, is_read: true }))
+      );
+      return { previous };
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previous) {
+        client.setQueryData(queryKeys.notifications, context.previous);
+      }
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
   });
 }

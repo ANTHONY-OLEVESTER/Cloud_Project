@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 
 import { useDashboard, useEvaluations } from "../services/hooks";
+import PageHero from "../components/PageHero";
+import reportsIllustration from "../assets/illustrations/reports-hero.svg";
 
 export default function ReportsPage() {
   const { data: summary, isLoading: summaryLoading } = useDashboard();
@@ -74,7 +76,7 @@ export default function ReportsPage() {
   };
 
   if (summaryLoading || evaluationsLoading) {
-    return <div>Loading reportsâ€¦</div>;
+    return <div>Loading reports…</div>;
   }
 
   const totalPolicies = summary?.summary.total_policies ?? 0;
@@ -90,17 +92,17 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>Reports</h1>
-          <p>Curated reporting and analytics for leadership and compliance stakeholders.</p>
-        </div>
-        <div className="page-header__actions">
+      <PageHero
+        title="Reports"
+        subtitle="Curated reporting and analytics for leadership and compliance stakeholders."
+        badge="Analytics"
+        illustration={reportsIllustration}
+        actions={(
           <button className="button" onClick={handleExportReport}>
             Export report
           </button>
-        </div>
-      </div>
+        )}
+      />
 
       <section className="report-grid">
         <ReportCard

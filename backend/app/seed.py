@@ -133,6 +133,33 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "last_checked_at": now - timedelta(hours=16),
             },
         },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "Critical policy violation",
+                "message": "AWS Root MFA Enabled is failing on account 123456789012.",
+                "type": models.NotificationType.POLICY_VIOLATION,
+                "created_at": now - timedelta(hours=2, minutes=15),
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "Azure connector pending",
+                "message": "Azure Root is waiting for admin consent to finalize the sync.",
+                "type": models.NotificationType.ACCOUNT_SYNC,
+                "created_at": now - timedelta(hours=1, minutes=5),
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "New compliance report ready",
+                "message": "Download the latest tri-cloud readiness assessment from the reports area.",
+                "type": models.NotificationType.BUILD_COMPLETE,
+                "created_at": now - timedelta(minutes=25),
+            },
+        },
     ]
 
     return records

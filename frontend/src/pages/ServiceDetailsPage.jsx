@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useAccounts, useEvaluations, usePolicies, useSyncAccount, useDeleteAccount } from "../services/hooks";
+import PageHero from "../components/PageHero";
 
 const PROVIDER_IMAGES = {
   aws: "https://images.unsplash.com/photo-1527430253228-e93688616381?auto=format&fit=crop&w=1600&q=80",
@@ -56,34 +57,36 @@ export default function ServiceDetailsPage() {
 
   return (
     <div className="service-details-page">
-      <div className="page-header">
-        <div>
-          <h1>{provider.toUpperCase()} Service Details</h1>
-          <p>Manage your {provider.toUpperCase()} cloud service configuration and monitoring.</p>
-        </div>
-        <div className="page-header__actions">
-          <button className="button" onClick={() => navigate("/connections")}>
-            Back to Connections
-          </button>
-          {connectedAccount && (
-            <>
-              <button 
-                className="button button--primary" 
-                onClick={handleSync}
-                disabled={syncAccount.isPending}
-              >
-                {syncAccount.isPending ? "Syncing..." : "Sync Now"}
-              </button>
-              <button 
-                className="button" 
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                {showSettings ? "Hide Settings" : "Settings"}
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+      <PageHero
+        title={`${provider.toUpperCase()} Service Details`}
+        subtitle={`Manage your ${provider.toUpperCase()} cloud service configuration and monitoring.`}
+        badge="Service workspace"
+        illustration={heroImage}
+        actions={(
+          <>
+            <button className="button" onClick={() => navigate("/connections")}>
+              Back to Connections
+            </button>
+            {connectedAccount && (
+              <>
+                <button
+                  className="button button--primary"
+                  onClick={handleSync}
+                  disabled={syncAccount.isPending}
+                >
+                  {syncAccount.isPending ? "Syncing..." : "Sync Now"}
+                </button>
+                <button
+                  className="button"
+                  onClick={() => setShowSettings(!showSettings)}
+                >
+                  {showSettings ? "Hide Settings" : "Settings"}
+                </button>
+              </>
+            )}
+          </>
+        )}
+      />
 
       {showSettings && connectedAccount && (
         <section className="card settings-card">
@@ -123,24 +126,28 @@ export default function ServiceDetailsPage() {
           <div className="card__title">
             Connection Overview
             <div className="card__actions">
-              <button 
-                className="icon-button" 
+              <button
+                className="icon-button"
                 title="View details"
                 onClick={() => setShowSettings(!showSettings)}
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 4.5A7.5 7.5 0 1 1 4.5 12A7.5 7.5 0 0 1 12 4.5zm0 5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M2.25 12s3.75-7.5 9.75-7.5 9.75 7.5 9.75 7.5-3.75 7.5-9.75 7.5-9.75-7.5-9.75-7.5Z" />
+                  <circle cx="12" cy="12" r="3" />
                 </svg>
               </button>
               {connectedAccount && (
-                <button 
-                  className="icon-button" 
+                <button
+                  className="icon-button"
                   title="Sync now"
                   onClick={handleSync}
                   disabled={syncAccount.isPending}
                 >
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 4v5h5M20 20v-5h-5M5.64 18.36A9 9 0 0 0 19 15.9l1.44 1.44A11 11 0 0 1 3.2 13.2l2.44 2.44ZM18.36 5.64A9 9 0 0 0 5 8.1L3.56 6.66A11 11 0 0 1 20.8 10.8l-2.44-2.44Z" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M4 8a8 8 0 0 1 13.66-3.5" />
+                    <path d="M20 8V3h-4" />
+                    <path d="M20 16a8 8 0 0 1-13.66 3.5" />
+                    <path d="M4 16v5h4" />
                   </svg>
                 </button>
               )}
@@ -266,13 +273,14 @@ export default function ServiceDetailsPage() {
                     </td>
                     <td>
                       <div className="table-actions">
-                        <button 
-                          className="icon-button" 
+                        <button
+                          className="icon-button"
                           title="View policy"
                           onClick={() => navigate(`/policies/${policy.id}`)}
                         >
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 4.5A7.5 7.5 0 1 1 4.5 12A7.5 7.5 0 0 1 12 4.5zm0 5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M2.25 12s3.75-7.5 9.75-7.5 9.75 7.5 9.75 7.5-3.75 7.5-9.75 7.5-9.75-7.5-9.75-7.5Z" />
+                            <circle cx="12" cy="12" r="3" />
                           </svg>
                         </button>
                       </div>

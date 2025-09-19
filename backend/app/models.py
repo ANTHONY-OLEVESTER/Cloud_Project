@@ -44,6 +44,14 @@ class ComplianceStatus(str, enum.Enum):
     UNKNOWN = "unknown"
 
 
+class NotificationType(str, enum.Enum):
+    POLICY_VIOLATION = "policy_violation"
+    ACCOUNT_SYNC = "account_sync"
+    BUILD_COMPLETE = "build_complete"
+    PROVISIONING = "provisioning"
+    BROADCAST = "broadcast"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -107,3 +115,14 @@ class PolicyEvaluation(Base):
 
     policy: Mapped[Policy] = relationship("Policy", back_populates="evaluations")
     account: Mapped[CloudAccount] = relationship("CloudAccount", back_populates="evaluations")
+
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    type: Mapped[NotificationType] = mapped_column(Enum(NotificationType), default=NotificationType.BROADCAST)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
