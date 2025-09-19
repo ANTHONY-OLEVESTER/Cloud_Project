@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useDashboard, useEvaluations, usePolicies } from "../services/hooks";
 import { getProviderIcon } from "../components/CloudProviderIcons";
+import { PageHero, StatsOverview } from "../components/PageElements";
 
 const TREND_TEMPLATE = [82, 84, 83, 85, 86, 88, 87, 89];
 const VIOLATION_TEMPLATE = [40, 38, 37, 34, 32, 30, 28, 26];
@@ -104,12 +105,12 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>Security Dashboard</h1>
-          <p>Monitor your cloud security posture across all connected providers.</p>
-        </div>
-        <div className="page-header__actions">
+      <PageHero 
+        title="Security Dashboard"
+        description="Monitor your cloud security posture across all connected providers with real-time insights and comprehensive analytics."
+        backgroundType="security"
+      >
+        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           <span className="pill pill--success">Last updated: 5 minutes ago</span>
           <button
             className="button button--secondary"
@@ -119,34 +120,32 @@ export default function DashboardPage() {
             Generate report
           </button>
         </div>
-      </div>
+      </PageHero>
 
-      <section className="stat-grid">
-        <StatCard
-          title="Security Score"
-          value={`${securityScore}/100`}
-          description="+5 from last week"
-          icon="Shield"
-        />
-        <StatCard
-          title="Compliance Rate"
-          value={`${complianceRate}%`}
-          description={`${compliantPolicies} of ${totalPolicies} policies compliant`}
-          icon="Check"
-        />
-        <StatCard
-          title="Active Policies"
-          value={totalPolicies}
-          description={`Across ${providerBreakdown.length} cloud providers`}
-          icon="Doc"
-        />
-        <StatCard
-          title="Open Violations"
-          value={nonCompliantPolicies}
-          description={`${nonCompliantPolicies} controls need attention`}
-          icon="Alert"
-        />
-      </section>
+      <StatsOverview 
+        stats={[
+          { 
+            value: `${securityScore}/100`, 
+            label: "Security Score", 
+            change: { value: "+5 from last week", type: "positive" }
+          },
+          { 
+            value: `${complianceRate}%`, 
+            label: "Compliance Rate", 
+            change: { value: `${compliantPolicies} of ${totalPolicies} policies`, type: "neutral" }
+          },
+          { 
+            value: totalPolicies, 
+            label: "Active Policies", 
+            change: { value: `Across ${providerBreakdown.length} providers`, type: "neutral" }
+          },
+          { 
+            value: nonCompliantPolicies, 
+            label: "Open Violations", 
+            change: { value: `${nonCompliantPolicies} need attention`, type: nonCompliantPolicies > 0 ? "negative" : "positive" }
+          }
+        ]}
+      />
 
       <section className="chart-card">
         <div className="card">
