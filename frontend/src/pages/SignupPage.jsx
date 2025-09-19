@@ -162,7 +162,7 @@ export default function SignupPage() {
               {signup.isPending ? "Creating workspace..." : "Create workspace"}
             </button>
             {errorMessage ? (
-              <div style={{ color: "#f87171", fontSize: "0.85rem", whiteSpace: "pre-line" }}>{errorMessage}</div>
+              <div style={{ color: "var(--danger-500)", fontSize: "0.85rem", whiteSpace: "pre-line" }}>{errorMessage}</div>
             ) : null}
           </form>
           <div className="auth-card__footer">

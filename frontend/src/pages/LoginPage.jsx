@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import AuthHero from "../components/AuthHero";
 import { useAuth } from "../context/AuthContext";
+import { useRouteTransition } from "../context/TransitionContext";
 import { useLogin } from "../services/hooks";
 import "../modern-auth.css";
 
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const login = useLogin();
   const location = useLocation();
   const navigate = useNavigate();
+  const { startTransition } = useRouteTransition();
   const [formState, setFormState] = useState({ email: "", password: "", remember: false });
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,9 +34,11 @@ export default function LoginPage() {
       {
         onSuccess: (response) => {
           const token = response?.token ?? "demo-token";
-          setAuthToken(token);
           const redirectTo = location.state?.from?.pathname ?? "/";
-          navigate(redirectTo, { replace: true });
+          startTransition("forward", () => {
+            setAuthToken(token);
+            navigate(redirectTo, { replace: true });
+          });
         },
         onError: (err) => {
           const detail = extractErrorMessage(err);
@@ -119,7 +123,7 @@ export default function LoginPage() {
               {login.isPending ? "Signing in..." : "Sign in"}
             </button>
             {errorMessage ? (
-              <div style={{ color: "#f87171", fontSize: "0.85rem", whiteSpace: "pre-line" }}>{errorMessage}</div>
+              <div style={{ color: "var(--danger-500)", fontSize: "0.85rem", whiteSpace: "pre-line" }}>{errorMessage}</div>
             ) : null}
           </form>
           <div className="auth-card__footer">

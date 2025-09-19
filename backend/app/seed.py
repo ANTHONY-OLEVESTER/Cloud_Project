@@ -133,6 +133,50 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "last_checked_at": now - timedelta(hours=16),
             },
         },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "Critical policy violation detected",
+                "message": "AWS Root MFA Enabled failed on AWS Master. Immediate remediation required.",
+                "type": models.NotificationCategory.POLICY_VIOLATION,
+                "action_path": "/policies",
+                "created_at": now - timedelta(hours=1, minutes=12),
+                "is_read": False,
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "Azure connection synced",
+                "message": "Azure Root completed the most recent configuration sync without issues.",
+                "type": models.NotificationCategory.ACCOUNT_SYNC,
+                "action_path": "/connections",
+                "created_at": now - timedelta(hours=4, minutes=30),
+                "is_read": False,
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "GCP build deployment finished",
+                "message": "Baseline hardening templates were deployed across the GCP Organization workspace.",
+                "type": models.NotificationCategory.BUILD_COMPLETE,
+                "action_path": "/services/gcp",
+                "created_at": now - timedelta(days=1, hours=3),
+                "is_read": True,
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "Weekly security digest ready",
+                "message": "Your latest executive summary report is prepared with key improvements and risks.",
+                "type": models.NotificationCategory.BROADCAST,
+                "action_path": "/reports",
+                "created_at": now - timedelta(days=2, hours=6),
+                "is_read": True,
+            },
+        },
     ]
 
     return records

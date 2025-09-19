@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import PageHeader from "../components/PageHeader";
 import { useCreatePolicy, useDeletePolicy, useEvaluations, usePolicies, useUpdatePolicy } from "../services/hooks";
+import { AlertTriangle, Hourglass, ScrollText, ShieldCheck } from "lucide-react";
 
 const severityOrder = ["critical", "high", "medium", "low"];
 const statusLabels = {
@@ -9,6 +11,9 @@ const statusLabels = {
   non_compliant: "Non-Compliant",
   unknown: "Pending",
 };
+
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1529101091764-c3526daf38fe?auto=format&fit=crop&w=1400&q=80";
 
 export default function PoliciesPage() {
   const navigate = useNavigate();
@@ -136,23 +141,43 @@ export default function PoliciesPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>Security Policies</h1>
-          <p>Monitor and manage security policies across your cloud infrastructure.</p>
-        </div>
-        <div className="page-header__actions">
+      <PageHeader
+        eyebrow="Governance"
+        title="Security Policies"
+        description="Monitor and curate policy controls across every provider with guided enforcement workflows."
+        image={HERO_IMAGE}
+        actions={
           <button className="button" onClick={() => setShowCreateForm(!showCreateForm)}>
             {showCreateForm ? "Cancel" : "Create policy"}
           </button>
-        </div>
-      </div>
+        }
+      />
 
       <section className="stat-grid">
-        <StatCard title="Total policies" value={summary.total} description="Across all providers" icon="📚" />
-        <StatCard title="Compliant" value={summary.compliant} description={`${summary.total ? Math.round((summary.compliant / summary.total) * 100) : 0}% compliance`} icon="✅" />
-        <StatCard title="Non-Compliant" value={summary.nonCompliant} description={`${summary.nonCompliant} total violations`} icon="⚠️" />
-        <StatCard title="Pending" value={summary.pending} description="Awaiting latest evidence" icon="⏳" />
+        <StatCard
+          title="Total policies"
+          value={summary.total}
+          description="Across all providers"
+          icon={ScrollText}
+        />
+        <StatCard
+          title="Compliant"
+          value={summary.compliant}
+          description={`${summary.total ? Math.round((summary.compliant / summary.total) * 100) : 0}% compliance`}
+          icon={ShieldCheck}
+        />
+        <StatCard
+          title="Non-Compliant"
+          value={summary.nonCompliant}
+          description={`${summary.nonCompliant} total violations`}
+          icon={AlertTriangle}
+        />
+        <StatCard
+          title="Pending"
+          value={summary.pending}
+          description="Awaiting latest evidence"
+          icon={Hourglass}
+        />
       </section>
 
       {showCreateForm && (
@@ -261,7 +286,7 @@ export default function PoliciesPage() {
               </button>
             </div>
             {(createPolicy.isError || updatePolicy.isError) && (
-              <div style={{ color: "#b91c1c", fontSize: "0.85rem" }}>
+              <div style={{ color: "var(--danger-500)", fontSize: "0.85rem" }}>
                 {createPolicy.error?.message || updatePolicy.error?.message || "Failed to save policy"}
               </div>
             )}
@@ -367,7 +392,7 @@ export default function PoliciesPage() {
                         title="Delete policy"
                         onClick={() => handleDeletePolicy(policy.id)}
                         disabled={deletePolicy.isPending}
-                        style={{ color: "#ef4444" }}
+                        style={{ color: "var(--danger-500)" }}
                       >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
                           <path d="M6 6h12M9 6l.34-1.37A2 2 0 0 1 11.27 3h1.46a2 2 0 0 1 1.93 1.63L15 6m4 0v13.25A2.75 2.75 0 0 1 16.25 22h-8.5A2.75 2.75 0 0 1 5 19.25V6h14Zm-9 4a1 1 0 1 0-2 0v7a1 1 0 1 0 2 0v-7Zm6 0a1 1 0 1 0-2 0v7a1 1 0 1 0 2 0v-7Z" />
@@ -390,11 +415,11 @@ export default function PoliciesPage() {
   );
 }
 
-function StatCard({ title, value, description, icon }) {
+function StatCard({ title, value, description, icon: Icon }) {
   return (
     <div className="stat-card">
       <div className="stat-card__icon" aria-hidden="true">
-        <span>{icon}</span>
+        <Icon size={22} strokeWidth={1.8} />
       </div>
       <p className="stat-card__title">{title}</p>
       <p className="stat-card__value">{value}</p>

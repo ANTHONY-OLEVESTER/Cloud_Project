@@ -3,11 +3,13 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 const STORAGE_KEY = "cloud_guard_theme";
 const DEFAULT_THEME = "light";
 const THEMES = [
-  { id: "light", label: "Light" },
-  { id: "blue", label: "Azure" },
-  { id: "teal", label: "Teal" },
-  { id: "rose", label: "Rose" },
-  { id: "amber", label: "Amber" },
+  { id: "light", label: "Polar Dawn" },
+  { id: "midnight", label: "Midnight Pulse" },
+  { id: "aurora", label: "Aurora" },
+  { id: "blue", label: "Arctic Sky" },
+  { id: "teal", label: "Lagoon" },
+  { id: "rose", label: "Coral Reef" },
+  { id: "amber", label: "Solar Flare" },
 ];
 
 const ThemeContext = createContext({

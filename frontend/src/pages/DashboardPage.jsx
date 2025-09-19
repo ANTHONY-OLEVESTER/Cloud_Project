@@ -1,6 +1,9 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
+import PageHeader from "../components/PageHeader";
 import { useDashboard, useEvaluations, usePolicies } from "../services/hooks";
+import { AlertTriangle, CheckCircle2, FileText, ShieldCheck } from "lucide-react";
 
 const TREND_TEMPLATE = [82, 84, 83, 85, 86, 88, 87, 89];
 const VIOLATION_TEMPLATE = [40, 38, 37, 34, 32, 30, 28, 26];
@@ -14,7 +17,11 @@ function buildPieGradient(compliant, nonCompliant, pending) {
   }deg, var(--text-subtle) ${compliantDeg + nonCompliantDeg}deg 360deg)`;
 }
 
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?auto=format&fit=crop&w=1400&q=80";
+
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const {
     data: summary,
     isLoading: summaryLoading,
@@ -95,47 +102,49 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>Security Dashboard</h1>
-          <p>Monitor your cloud security posture across all connected providers.</p>
-        </div>
-        <div className="page-header__actions">
-          <span className="pill pill--success">Last updated: 5 minutes ago</span>
-          <button
-            className="button button--secondary"
-            type="button"
-            onClick={handleGenerateReport}
-          >
-            Generate report
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Security intelligence"
+        title="Security Dashboard"
+        description="Monitor your multi-cloud security posture, control drift, and align remediation across teams."
+        image={HERO_IMAGE}
+        actions={
+          <div className="page-hero__inline-actions">
+            <span className="pill pill--success">Last updated: 5 minutes ago</span>
+            <button
+              className="button button--secondary"
+              type="button"
+              onClick={handleGenerateReport}
+            >
+              Generate report
+            </button>
+          </div>
+        }
+      />
 
       <section className="stat-grid">
         <StatCard
           title="Security Score"
           value={`${securityScore}/100`}
           description="+5 from last week"
-          icon="Shield"
+          icon={ShieldCheck}
         />
         <StatCard
           title="Compliance Rate"
           value={`${complianceRate}%`}
           description={`${compliantPolicies} of ${totalPolicies} policies compliant`}
-          icon="Check"
+          icon={CheckCircle2}
         />
         <StatCard
           title="Active Policies"
           value={totalPolicies}
           description={`Across ${providerBreakdown.length} cloud providers`}
-          icon="Doc"
+          icon={FileText}
         />
         <StatCard
           title="Open Violations"
           value={nonCompliantPolicies}
           description={`${nonCompliantPolicies} controls need attention`}
-          icon="Alert"
+          icon={AlertTriangle}
         />
       </section>
 
@@ -171,11 +180,16 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section className="card">
+      <section className="card card--interactive">
         <div className="card__title">Cloud provider status</div>
         <div style={{ display: "grid", gap: "16px" }}>
           {providerBreakdown.map((provider) => (
-            <div key={provider.provider} className="connection-card">
+            <button
+              key={provider.provider}
+              type="button"
+              className="connection-card connection-card--link"
+              onClick={() => navigate(`/services/${provider.provider}`)}
+            >
               <div className="connection-card__icon">
                 <ProviderIcon provider={provider.provider} />
               </div>
@@ -194,7 +208,7 @@ export default function DashboardPage() {
                   <strong>{provider.unknown}</strong> pending
                 </span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </section>
@@ -202,18 +216,11 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ title, value, description, icon }) {
-  const iconMap = {
-    Shield: "🛡️",
-    Check: "✅",
-    Doc: "📋",
-    Alert: "⚠️"
-  };
-
+function StatCard({ title, value, description, icon: Icon }) {
   return (
     <div className="stat-card">
       <div className="stat-card__icon" aria-hidden="true">
-        <span>{iconMap[icon] || "📊"}</span>
+        <Icon size={22} strokeWidth={1.8} />
       </div>
       <p className="stat-card__title">{title}</p>
       <p className="stat-card__value">{value}</p>
