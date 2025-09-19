@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+import PageHero from "../components/PageHero";
+import settingsIllustration from "../assets/illustrations/settings-hero.svg";
+
 const tabs = [
   { id: "account", label: "Account" },
   { id: "notifications", label: "Notifications" },
@@ -48,12 +51,12 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-card">
-      <div className="page-header">
-        <div>
-          <h1>Settings</h1>
-          <p>Manage your account, team, and platform preferences.</p>
-        </div>
-      </div>
+      <PageHero
+        title="Settings"
+        subtitle="Manage your account, team, and platform preferences."
+        badge="Workspace preferences"
+        illustration={settingsIllustration}
+      />
 
       <div className="tabs">
         {tabs.map((tab) => (

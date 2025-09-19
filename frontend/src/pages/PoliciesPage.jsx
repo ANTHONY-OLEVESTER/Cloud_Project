@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useCreatePolicy, useDeletePolicy, useEvaluations, usePolicies, useUpdatePolicy } from "../services/hooks";
+import PageHero from "../components/PageHero";
+import policiesIllustration from "../assets/illustrations/policies-hero.svg";
 
 const severityOrder = ["critical", "high", "medium", "low"];
 const statusLabels = {
@@ -136,17 +138,17 @@ export default function PoliciesPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>Security Policies</h1>
-          <p>Monitor and manage security policies across your cloud infrastructure.</p>
-        </div>
-        <div className="page-header__actions">
+      <PageHero
+        title="Security Policies"
+        subtitle="Monitor and manage security policies across your cloud infrastructure."
+        badge="Policy library"
+        illustration={policiesIllustration}
+        actions={(
           <button className="button" onClick={() => setShowCreateForm(!showCreateForm)}>
             {showCreateForm ? "Cancel" : "Create policy"}
           </button>
-        </div>
-      </div>
+        )}
+      />
 
       <section className="stat-grid">
         <StatCard title="Total policies" value={summary.total} description="Across all providers" icon="📚" />

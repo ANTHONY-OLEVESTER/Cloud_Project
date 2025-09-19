@@ -1,0 +1,23 @@
+<svg width="360" height="220" viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Policy library illustration">
+  <defs>
+    <linearGradient id="policies-gradient" x1="48" y1="40" x2="300" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#EC4899"/>
+      <stop offset="1" stop-color="#6366F1"/>
+    </linearGradient>
+    <linearGradient id="policies-card" x1="90" y1="70" x2="270" y2="190" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#FDF2F8" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect x="28" y="32" width="304" height="176" rx="32" fill="url(#policies-gradient)"/>
+  <rect x="76" y="64" width="208" height="128" rx="24" fill="url(#policies-card)"/>
+  <rect x="96" y="88" width="168" height="18" rx="9" fill="#312E81" fill-opacity="0.18"/>
+  <rect x="96" y="114" width="132" height="12" rx="6" fill="#BE185D" fill-opacity="0.35"/>
+  <rect x="96" y="134" width="148" height="12" rx="6" fill="#F472B6" fill-opacity="0.55"/>
+  <rect x="96" y="154" width="110" height="12" rx="6" fill="#6366F1" fill-opacity="0.45"/>
+  <circle cx="248" cy="94" r="14" fill="#EC4899" fill-opacity="0.85"/>
+  <path d="M243 94L247 98L254 90" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="124" cy="72" r="14" fill="#F8FAFC" fill-opacity="0.7"/>
+  <path d="M120 72H128" stroke="#EC4899" stroke-width="3" stroke-linecap="round"/>
+  <path d="M124 68V76" stroke="#EC4899" stroke-width="3" stroke-linecap="round"/>
+</svg>

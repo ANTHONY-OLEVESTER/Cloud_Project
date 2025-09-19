@@ -1,4 +1,4 @@
-﻿export default function AuthHero({
+export default function AuthHero({
   imageUrl,
   eyebrow,
   title,

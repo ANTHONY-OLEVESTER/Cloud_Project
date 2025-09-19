@@ -1,17 +1,25 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "../context/AuthContext";
-import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "../services/hooks";
+import {
+  useNotifications,
+  useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+} from "../services/hooks";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { runAppTransition } from "../lib/transitions";
 
 const navItems = [
   {
     to: "/",
     label: "Dashboard",
     icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 13.25A2.25 2.25 0 0 1 5.25 11h4.5A2.25 2.25 0 0 1 12 13.25v5.5A2.25 2.25 0 0 1 9.75 21h-4.5A2.25 2.25 0 0 1 3 18.75v-5.5Zm9-8.5A2.25 2.25 0 0 1 14.25 2h4.5A2.25 2.25 0 0 1 21 4.75v3.5A2.25 2.25 0 0 1 18.75 10h-4.5A2.25 2.25 0 0 1 12 7.75v-3Zm0 8.5A2.25 2.25 0 0 1 14.25 11h4.5A2.25 2.25 0 0 1 21 13.25v5.5A2.25 2.25 0 0 1 18.75 21h-4.5A2.25 2.25 0 0 1 12 18.75v-5.5ZM3 4.75A2.75 2.75 0 0 1 5.75 2h3.5A2.75 2.75 0 0 1 12 4.75v3.5A2.75 2.75 0 0 1 9.25 11h-3.5A2.75 2.75 0 0 1 3 8.25v-3.5Z" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
+        <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
+        <rect x="3.5" y="13.5" width="7" height="7" rx="2" />
+        <rect x="13.5" y="13.5" width="7" height="7" rx="2" />
       </svg>
     ),
   },
@@ -19,8 +27,11 @@ const navItems = [
     to: "/connections",
     label: "Cloud Connections",
     icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 4a6 6 0 0 0-6 6v.25a4.5 4.5 0 0 0 .75 8.91h10.5a4.5 4.5 0 0 0 .75-8.91V10a6 6 0 0 0-6-6Zm-4.5 9.5a.75.75 0 0 1 .75-.75H12a.75.75 0 0 1 0 1.5H8.25a.75.75 0 0 1-.75-.75Zm3 3a.75.75 0 0 1 .75-.75h3.75a.75.75 0 0 1 0 1.5H11.25a.75.75 0 0 1-.75-.75Z" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6.5 17.5h11a3.5 3.5 0 0 0 .4-6.97 5.5 5.5 0 0 0-10.76-1.3A3.5 3.5 0 0 0 6.5 17.5Z" />
+        <circle cx="9" cy="18.5" r="1.3" />
+        <circle cx="15" cy="18.5" r="1.3" />
+        <path d="M9 18.5v2M15 18.5v2" />
       </svg>
     ),
   },
@@ -28,8 +39,9 @@ const navItems = [
     to: "/policies",
     label: "Policies",
     icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M5 3.75A2.75 2.75 0 0 1 7.75 1h8.5A2.75 2.75 0 0 1 19 3.75V20.5a.75.75 0 0 1-1.14.63L12 17.14l-5.86 3.99A.75.75 0 0 1 5 20.5V3.75ZM8.5 7a1 1 0 0 0 0 2h7a1 1 0 1 0 0-2h-7Zm0 4.5a1 1 0 1 0 0 2h7a1 1 0 1 0 0-2h-7Z" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 3 5 6v6.6c0 3.6 2.6 6.9 7 8.4 4.4-1.5 7-4.8 7-8.4V6l-7-3Z" />
+        <path d="m9.5 12.5 1.8 1.8 3.4-3.6" />
       </svg>
     ),
   },
@@ -37,8 +49,12 @@ const navItems = [
     to: "/reports",
     label: "Reports",
     icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M6.75 3A2.75 2.75 0 0 0 4 5.75v12.5A2.75 2.75 0 0 0 6.75 21h10.5A2.75 2.75 0 0 0 20 18.25V8.5L14.5 3h-7.75Zm6.75.94 3.56 3.56h-2.06A1.5 1.5 0 0 1 13.5 6V3.94ZM8.5 11a1 1 0 1 1 0-2h3a1 1 0 1 1 0 2h-3Zm0 3.5a1 1 0 1 1 0-2h7a1 1 0 1 1 0 2h-7Zm0 3.5a1 1 0 1 1 0-2h5a1 1 0 1 1 0 2h-5Z" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 19.5h16" />
+        <path d="M8 17V9.5" />
+        <path d="M12 17v-6" />
+        <path d="M16 17v-4" />
+        <path d="m8.5 11.5 3.5-3.5 3.5 3.5 2.8-2.8" />
       </svg>
     ),
   },
@@ -46,64 +62,124 @@ const navItems = [
     to: "/settings",
     label: "Settings",
     icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M10.21 2.25c.46-1.5 2.54-1.5 3 0l.46 1.5c.18.57.75.94 1.35.84l1.53-.25c1.53-.25 2.5 1.63 1.45 2.78l-1.06 1.16c-.4.44-.4 1.11 0 1.55l1.06 1.16c1.05 1.15.08 3.03-1.45 2.78l-1.53-.25c-.6-.1-1.17.27-1.35.84l-.46 1.5c-.46 1.5-2.54 1.5-3 0l-.46-1.5c-.18-.57-.75-.94-1.35-.84l-1.53.25c-1.53.25-2.5-1.63-1.45-2.78l1.06-1.16c.4-.44.4-1.11 0-1.55L5.42 7.12c-1.05-1.15-.08-3.03 1.45-2.78l1.53.25c.6.1 1.17-.27 1.35-.84l.46-1.5ZM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" />
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M9.594 3.94c.09-.54.56-.94 1.11-.94h2.59c.55 0 1.02.4 1.11.94l.26 1.5c.04.19.16.36.33.47l1.3.75c.47.27.62.86.33 1.3l-.9 1.3a1.1 1.1 0 0 0-.12.58l.3 1.52a1.12 1.12 0 0 1-.55 1.2l-1.35.78c-.18.11-.31.27-.41.43l-.53 1.32c-.17.42-.58.7-1.04.7h-1.5c-.46 0-.87-.28-1.04-.7l-.53-1.32a1.1 1.1 0 0 0-.41-.43l-1.35-.78a1.12 1.12 0 0 1-.55-1.2l.3-1.52a1.1 1.1 0 0 0-.12-.58l-.9-1.3a1.12 1.12 0 0 1 .33-1.3l1.3-.75c.17-.1.29-.27.33-.47l.26-1.5Z" />
+        <circle cx="12" cy="12" r="3" />
       </svg>
     ),
   },
 ];
+
+const notificationIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 3a4 4 0 0 1 4 4v1.1a6 6 0 0 1 2.6 4.9V16l1.2 1.6c.34.46 0 1.1-.57 1.1H4.77c-.57 0-.91-.64-.57-1.1L5.4 16v-3a6 6 0 0 1 2.6-4.9V7a4 4 0 0 1 4-4Z" />
+    <path d="M9.5 19.5A2.5 2.5 0 0 0 12 22a2.5 2.5 0 0 0 2.5-2.5" />
+  </svg>
+);
+
+const logoutIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M15.75 6.75V5A2.25 2.25 0 0 0 13.5 2.75h-6A2.25 2.25 0 0 0 5.25 5v14A2.25 2.25 0 0 0 7.5 21.25h6a2.25 2.25 0 0 0 2.25-2.25v-1.75" />
+    <path d="m18 8.75 3.25 3.25L18 15.25" />
+    <path d="M9.75 12h11.25" />
+  </svg>
+);
+
+const menuIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+    <path d="M4 7.5h16M4 12h16M4 16.5h16" />
+  </svg>
+);
+
+const closeIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M6 6 18 18M6 18 18 6" />
+  </svg>
+);
 
 export default function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
-  
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dismissedNotificationIds, setDismissedNotificationIds] = useState(new Set());
+
   const { data: notifications = [] } = useNotifications();
   const markNotificationRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
 
-  const unreadCount = notifications.filter(n => !n.is_read).length;
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    setDismissedNotificationIds((prev) => {
+      const next = new Set();
+      notifications.forEach((notification) => {
+        if (prev.has(notification.id) && notification.is_read) {
+          next.add(notification.id);
+        }
+      });
+      return next;
+    });
+  }, [notifications]);
+
+  const visibleNotifications = useMemo(
+    () => notifications.filter((notification) => !dismissedNotificationIds.has(notification.id)),
+    [notifications, dismissedNotificationIds]
+  );
+
+  const unreadCount = visibleNotifications.filter((notification) => !notification.is_read).length;
 
   const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
+    runAppTransition("exit", () => {
+      logout();
+      navigate("/login", { replace: true });
+    });
   };
 
   const handleNotificationClick = (notification) => {
     if (!notification.is_read) {
       markNotificationRead.mutate(notification.id);
     }
+
+    setDismissedNotificationIds((prev) => new Set(prev).add(notification.id));
     setShowNotifications(false);
-    
-    // Navigate based on notification type
-    if (notification.type === 'policy_violation') {
-      navigate('/policies');
-    } else if (notification.type === 'account_sync') {
-      navigate('/connections');
-    } else if (notification.type === 'build_complete') {
-      navigate('/');
+
+    if (notification.type === "policy_violation") {
+      navigate("/policies");
+    } else if (notification.type === "account_sync" || notification.type === "provisioning") {
+      navigate("/connections");
+    } else if (notification.type === "build_complete") {
+      navigate("/reports");
     }
   };
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
+    <div className={`app-shell ${sidebarOpen ? "app-shell--sidebar-open" : ""}`}>
+      <aside className={`sidebar ${sidebarOpen ? "sidebar--open" : ""}`}>
         <div className="sidebar__logo">
           <div className="sidebar__logo-icon">🛡️</div>
-          <div>
+          <div className="sidebar__brand">
             <span className="sidebar__logo-name">SecureCloud</span>
             <span className="sidebar__badge">Enterprise</span>
           </div>
+          <button
+            type="button"
+            className="sidebar__close"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close navigation"
+          >
+            {closeIcon}
+          </button>
         </div>
         <nav className="sidebar__nav">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) =>
-                `sidebar__link ${isActive ? "sidebar__link--active" : ""}`
-              }
+              className={({ isActive }) => `sidebar__link ${isActive ? "sidebar__link--active" : ""}`}
               end={item.to === "/"}
             >
               {item.icon}
@@ -118,39 +194,59 @@ export default function MainLayout() {
             <span>All systems operational</span>
           </div>
         </div>
+        <div className="sidebar__footer">
+          <ThemeSwitcher />
+        </div>
       </aside>
+
+      {sidebarOpen && (
+        <button
+          type="button"
+          className="sidebar-overlay"
+          aria-label="Hide navigation"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       <div className="main-area">
         <header className="topbar">
-          <form className="topbar__search" role="search">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10.5 3a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 3.9 9.4l3.57 3.56a1 1 0 0 0 1.42-1.42l-3.56-3.57A5.5 5.5 0 0 0 10.5 5Z" />
-            </svg>
-            <input placeholder="Search policies, alerts..." aria-label="Search" />
-          </form>
+          <div className="topbar__left">
+            <button
+              type="button"
+              className="topbar__menu"
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              aria-label="Toggle navigation"
+            >
+              {menuIcon}
+            </button>
+            <form className="topbar__search" role="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="6" />
+                <path d="m16.5 16.5 3 3" />
+              </svg>
+              <input placeholder="Search policies, alerts..." aria-label="Search" />
+            </form>
+          </div>
           <div className="topbar__right">
-            <ThemeSwitcher />
             <div className="notification-container">
-              <button 
-                className="icon-button" 
-                type="button" 
+              <button
+                className="icon-button"
+                type="button"
                 aria-label="Notifications"
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={() => setShowNotifications((prev) => !prev)}
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 2a4 4 0 0 1 4 4v1.26c1.73.83 3 2.6 3 4.74v4l1.2 1.6c.52.7.02 1.66-.84 1.66H4.64c-.86 0-1.36-.96-.84-1.66L5 16v-4c0-2.14 1.27-3.9 3-4.74V6a4 4 0 0 1 4-4Zm0 20a2.5 2.5 0 0 1-2.45-2h4.9A2.5 2.5 0 0 1 12 22Z" />
-                </svg>
-                {unreadCount > 0 && (
-                  <span className="icon-button__badge">{unreadCount}</span>
-                )}
+                {notificationIcon}
+                {unreadCount > 0 && <span className="icon-button__badge">{unreadCount}</span>}
               </button>
-              
+
               {showNotifications && (
                 <div className="notification-dropdown">
                   <div className="notification-dropdown__header">
                     <h3>Notifications</h3>
-                    {unreadCount > 0 && (
-                      <button 
+                    {visibleNotifications.length > 0 && (
+                      <button
                         className="text-button"
+                        type="button"
                         onClick={() => markAllRead.mutate()}
                       >
                         Mark all read
@@ -158,39 +254,34 @@ export default function MainLayout() {
                     )}
                   </div>
                   <div className="notification-dropdown__list">
-                    {notifications.length === 0 ? (
-                      <div className="notification-item notification-item--empty">
-                        No notifications
-                      </div>
+                    {visibleNotifications.length === 0 ? (
+                      <div className="notification-item notification-item--empty">No notifications</div>
                     ) : (
-                      notifications.slice(0, 5).map((notification) => (
-                        <div
+                      visibleNotifications.slice(0, 6).map((notification) => (
+                        <button
                           key={notification.id}
-                          className={`notification-item ${!notification.is_read ? 'notification-item--unread' : ''}`}
+                          type="button"
+                          className={`notification-item ${!notification.is_read ? "notification-item--unread" : ""}`}
                           onClick={() => handleNotificationClick(notification)}
                         >
                           <div className="notification-item__icon">
-                            {notification.type === 'policy_violation' && '⚠️'}
-                            {notification.type === 'account_sync' && '🔄'}
-                            {notification.type === 'build_complete' && '✅'}
-                            {!['policy_violation', 'account_sync', 'build_complete'].includes(notification.type) && '📢'}
+                            {notification.type === "policy_violation" && "⚠️"}
+                            {notification.type === "account_sync" && "🔄"}
+                            {notification.type === "build_complete" && "📈"}
+                            {notification.type === "provisioning" && "🚀"}
+                            {!["policy_violation", "account_sync", "build_complete", "provisioning"].includes(notification.type) && "📢"}
                           </div>
                           <div className="notification-item__content">
                             <div className="notification-item__title">{notification.title}</div>
                             <div className="notification-item__message">{notification.message}</div>
                             <div className="notification-item__time">
-                              {new Date(notification.created_at).toLocaleString()}
+                              {new Date(notification.created_at ?? Date.now()).toLocaleString()}
                             </div>
                           </div>
-                        </div>
+                        </button>
                       ))
                     )}
                   </div>
-                  {notifications.length > 5 && (
-                    <div className="notification-dropdown__footer">
-                      <button className="text-button">View all notifications</button>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -202,9 +293,7 @@ export default function MainLayout() {
               </div>
             </div>
             <button className="button topbar__logout" type="button" onClick={handleLogout} title="Sign out">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M16 17l5-5-5-5v3H9v4h7v3zM14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z" />
-              </svg>
+              {logoutIcon}
               <span className="topbar__logout-text">Sign out</span>
             </button>
           </div>
