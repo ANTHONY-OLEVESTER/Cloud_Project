@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import PageHeader from "../components/PageHeader";
+
 const tabs = [
   { id: "account", label: "Account" },
   { id: "notifications", label: "Notifications" },
@@ -7,6 +9,9 @@ const tabs = [
   { id: "team", label: "Team" },
   { id: "api", label: "API & Integration" },
 ];
+
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("account");
@@ -48,12 +53,12 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-card">
-      <div className="page-header">
-        <div>
-          <h1>Settings</h1>
-          <p>Manage your account, team, and platform preferences.</p>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Workspace"
+        title="Settings"
+        description="Manage your account, team, and platform preferences."
+        image={HERO_IMAGE}
+      />
 
       <div className="tabs">
         {tabs.map((tab) => (
@@ -154,7 +159,7 @@ export default function SettingsPage() {
               <div
                 style={{
                   marginLeft: "12px",
-                  color: saveMessage.includes("Failed") ? "#ef4444" : "#22c55e",
+                  color: saveMessage.includes("Failed") ? "var(--danger-500)" : "var(--success-500)",
                   fontSize: "0.875rem"
                 }}
               >

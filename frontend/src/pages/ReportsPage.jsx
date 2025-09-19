@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 
+import PageHeader from "../components/PageHeader";
 import { useDashboard, useEvaluations } from "../services/hooks";
+import { AlertTriangle, Clock3, FileBarChart2, ShieldCheck } from "lucide-react";
+
+const HERO_IMAGE =
+  "https://images.unsplash.com/photo-1483478550801-ceba5fe50e8e?auto=format&fit=crop&w=1400&q=80";
 
 export default function ReportsPage() {
   const { data: summary, isLoading: summaryLoading } = useDashboard();
@@ -74,7 +79,7 @@ export default function ReportsPage() {
   };
 
   if (summaryLoading || evaluationsLoading) {
-    return <div>Loading reportsâ€¦</div>;
+    return <div>Loading reports…</div>;
   }
 
   const totalPolicies = summary?.summary.total_policies ?? 0;
@@ -90,40 +95,44 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>Reports</h1>
-          <p>Curated reporting and analytics for leadership and compliance stakeholders.</p>
-        </div>
-        <div className="page-header__actions">
+      <PageHeader
+        eyebrow="Analytics"
+        title="Reports"
+        description="Curated reporting and analytics for leadership and compliance stakeholders."
+        image={HERO_IMAGE}
+        actions={
           <button className="button" onClick={handleExportReport}>
             Export report
           </button>
-        </div>
-      </div>
+        }
+      />
 
       <section className="report-grid">
         <ReportCard
           heading="Policy coverage"
           value={`${compliantPolicies}/${totalPolicies}`}
           description="Policies currently meeting baseline"
+          icon={ShieldCheck}
         />
         <ReportCard
           heading="Open violations"
           value={nonCompliantPolicies}
           tone="danger"
           description="Policies with outstanding findings"
+          icon={AlertTriangle}
         />
         <ReportCard
           heading="Pending scans"
           value={pendingPolicies}
           tone="warning"
           description="Controls awaiting latest evidence"
+          icon={Clock3}
         />
         <ReportCard
           heading="Compliance rate"
           value={`${totalPolicies ? Math.round((compliantPolicies / totalPolicies) * 100) : 0}%`}
           description="Compliance across connected providers"
+          icon={FileBarChart2}
         />
       </section>
 
@@ -150,10 +159,17 @@ export default function ReportsPage() {
   );
 }
 
-function ReportCard({ heading, value, description, tone = "default" }) {
+function ReportCard({ heading, value, description, tone = "default", icon: Icon }) {
   return (
     <article className={`card report-card report-card--${tone}`}>
-      <h3>{heading}</h3>
+      <div className="report-card__heading">
+        {Icon ? (
+          <span className="report-card__icon" aria-hidden="true">
+            <Icon size={20} strokeWidth={1.8} />
+          </span>
+        ) : null}
+        <h3>{heading}</h3>
+      </div>
       <div className="report-card__value">{value}</div>
       <p className="card__meta">{description}</p>
     </article>
