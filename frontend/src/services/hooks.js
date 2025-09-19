@@ -23,7 +23,33 @@ export function useDashboard() {
         complianceRate: 86,
         compliantPolicies: 41,
         nonCompliantPolicies: 6,
-        pendingPolicies: 0
+        pendingPolicies: 0,
+        providers: [
+          {
+            provider: "aws",
+            accounts: 2,
+            status: "connected",
+            policies: 25,
+            resources: 1500,
+            complianceRate: 90
+          },
+          {
+            provider: "azure", 
+            accounts: 1,
+            status: "connected",
+            policies: 15,
+            resources: 850,
+            complianceRate: 85
+          },
+          {
+            provider: "gcp",
+            accounts: 1,
+            status: "pending",
+            policies: 7,
+            resources: 490,
+            complianceRate: 75
+          }
+        ]
       };
     },
   });

@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useDashboard, useEvaluations, usePolicies } from "../services/hooks";
+import { getProviderIcon } from "../components/CloudProviderIcons";
 
 const TREND_TEMPLATE = [82, 84, 83, 85, 86, 88, 87, 89];
 const VIOLATION_TEMPLATE = [40, 38, 37, 34, 32, 30, 28, 26];
@@ -21,6 +23,7 @@ function buildPieGradient(compliant, nonCompliant, pending) {
 }
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const {
     data: summary,
     isLoading: summaryLoading,
@@ -181,24 +184,35 @@ export default function DashboardPage() {
         <div className="card__title">Cloud provider status</div>
         <div style={{ display: "grid", gap: "16px" }}>
           {providerBreakdown.map((provider) => (
-            <div key={provider.provider} className="connection-card">
+            <div 
+              key={provider.provider} 
+              className="connection-card clickable-card" 
+              onClick={() => navigate(`/services/${provider.provider}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="connection-card__icon">
-                <ProviderIcon provider={provider.provider} />
+                {getProviderIcon(provider.provider, 32)}
               </div>
               <div className="connection-card__meta">
-                <strong style={{ fontSize: "1rem" }}>{provider.provider.toUpperCase()} cloud</strong>
-                <span>{provider.accounts} connected accounts</span>
+                <strong style={{ fontSize: "1rem" }}>{provider.provider.toUpperCase()} Cloud</strong>
+                <span>{provider.accounts} connected account{provider.accounts !== 1 ? 's' : ''}</span>
               </div>
               <div className="connection-card__stats">
                 <span>
-                  <strong>{provider.compliant}</strong> compliant
+                  <strong>{provider.policies}</strong> policies
                 </span>
                 <span>
-                  <strong>{provider.non_compliant}</strong> violations
+                  <strong>{provider.resources}</strong> resources
                 </span>
                 <span>
-                  <strong>{provider.unknown}</strong> pending
+                  <strong>{provider.complianceRate}%</strong> compliant
                 </span>
+              </div>
+              <div className="provider-status-badge">
+                {provider.status === 'connected' ? 
+                  <span className="badge badge--success">Connected</span> :
+                  <span className="badge badge--warning">Pending</span>
+                }
               </div>
             </div>
           ))}
@@ -265,12 +279,4 @@ function LegendItem({ label, color, value }) {
   );
 }
 
-function ProviderIcon({ provider }) {
-  const sources = {
-    aws: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg",
-    azure: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg",
-    gcp: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg",
-  };
-  const src = sources[provider] || sources.aws;
-  return <img src={src} alt={`${provider} logo`} loading="lazy" />;
-}
+
