@@ -5,7 +5,13 @@ from typing import Optional
 
 from pydantic import BaseModel, EmailStr, Field
 
-from app.models import AccountStatus, CloudProvider, ComplianceStatus, PolicySeverity
+from app.models import (
+    AccountStatus,
+    CloudProvider,
+    ComplianceStatus,
+    NotificationCategory,
+    PolicySeverity,
+)
 
 
 # User schemas
@@ -154,3 +160,24 @@ class ProviderBreakdown(BaseModel):
 class DashboardSnapshot(BaseModel):
     summary: ComplianceSummary
     providers: list[ProviderBreakdown]
+
+
+# Notification schemas
+class NotificationBase(BaseModel):
+    title: str = Field(min_length=2, max_length=255)
+    message: str = Field(min_length=4)
+    type: NotificationCategory = NotificationCategory.BROADCAST
+    action_path: str | None = Field(default=None, max_length=255)
+
+
+class NotificationCreate(NotificationBase):
+    pass
+
+
+class NotificationRead(NotificationBase):
+    id: int
+    created_at: datetime
+    is_read: bool
+
+    class Config:
+        from_attributes = True

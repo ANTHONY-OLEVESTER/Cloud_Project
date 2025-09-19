@@ -1,7 +1,15 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+import PageHeader from "../components/PageHeader";
 import { useAccounts, useEvaluations, usePolicies, useSyncAccount, useDeleteAccount } from "../services/hooks";
+import {
+  ClipboardList,
+  Eye,
+  FileBarChart2,
+  RefreshCcw,
+  Settings2,
+} from "lucide-react";
 
 const PROVIDER_IMAGES = {
   aws: "https://images.unsplash.com/photo-1527430253228-e93688616381?auto=format&fit=crop&w=1600&q=80",
@@ -56,34 +64,36 @@ export default function ServiceDetailsPage() {
 
   return (
     <div className="service-details-page">
-      <div className="page-header">
-        <div>
-          <h1>{provider.toUpperCase()} Service Details</h1>
-          <p>Manage your {provider.toUpperCase()} cloud service configuration and monitoring.</p>
-        </div>
-        <div className="page-header__actions">
-          <button className="button" onClick={() => navigate("/connections")}>
-            Back to Connections
-          </button>
-          {connectedAccount && (
-            <>
-              <button 
-                className="button button--primary" 
-                onClick={handleSync}
-                disabled={syncAccount.isPending}
-              >
-                {syncAccount.isPending ? "Syncing..." : "Sync Now"}
-              </button>
-              <button 
-                className="button" 
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                {showSettings ? "Hide Settings" : "Settings"}
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={`${provider.toUpperCase()} cloud`}
+        title={`${provider.toUpperCase()} Service Details`}
+        description={`Manage your ${provider.toUpperCase()} cloud service configuration and monitoring.`}
+        image={heroImage}
+        actions={
+          <div className="page-hero__inline-actions">
+            <button className="button button--secondary" onClick={() => navigate("/connections")}>
+              Back to Connections
+            </button>
+            {connectedAccount && (
+              <>
+                <button
+                  className="button button--primary"
+                  onClick={handleSync}
+                  disabled={syncAccount.isPending}
+                >
+                  {syncAccount.isPending ? "Syncing..." : "Sync Now"}
+                </button>
+                <button
+                  className="button"
+                  onClick={() => setShowSettings(!showSettings)}
+                >
+                  {showSettings ? "Hide Settings" : "Settings"}
+                </button>
+              </>
+            )}
+          </div>
+        }
+      />
 
       {showSettings && connectedAccount && (
         <section className="card settings-card">
@@ -198,28 +208,36 @@ export default function ServiceDetailsPage() {
           <div className="card__title">Quick Actions</div>
           <div className="action-grid">
             <button className="action-button" onClick={() => navigate("/policies")}>
-              <div className="action-icon">📋</div>
+              <div className="action-icon" aria-hidden="true">
+                <ClipboardList size={20} />
+              </div>
               <div className="action-content">
                 <span>Manage Policies</span>
                 <small>View and edit security policies</small>
               </div>
             </button>
             <button className="action-button" onClick={() => navigate("/reports")}>
-              <div className="action-icon">📊</div>
+              <div className="action-icon" aria-hidden="true">
+                <FileBarChart2 size={20} />
+              </div>
               <div className="action-content">
                 <span>Generate Report</span>
                 <small>Create compliance reports</small>
               </div>
             </button>
             <button className="action-button" onClick={handleSync} disabled={!connectedAccount || syncAccount.isPending}>
-              <div className="action-icon">🔄</div>
+              <div className="action-icon" aria-hidden="true">
+                <RefreshCcw size={20} />
+              </div>
               <div className="action-content">
                 <span>Sync Resources</span>
                 <small>Update resource inventory</small>
               </div>
             </button>
             <button className="action-button" onClick={() => setShowSettings(true)}>
-              <div className="action-icon">⚙️</div>
+              <div className="action-icon" aria-hidden="true">
+                <Settings2 size={20} />
+              </div>
               <div className="action-content">
                 <span>Configure</span>
                 <small>Manage service settings</small>
@@ -266,14 +284,12 @@ export default function ServiceDetailsPage() {
                     </td>
                     <td>
                       <div className="table-actions">
-                        <button 
-                          className="icon-button" 
+                        <button
+                          className="icon-button"
                           title="View policy"
                           onClick={() => navigate(`/policies/${policy.id}`)}
                         >
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 4.5A7.5 7.5 0 1 1 4.5 12A7.5 7.5 0 0 1 12 4.5zm0 5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
-                          </svg>
+                          <Eye size={18} aria-hidden="true" />
                         </button>
                       </div>
                     </td>
@@ -317,7 +333,7 @@ export default function ServiceDetailsPage() {
                         {evaluation.status.replace("_", " ")}
                       </span>
                     </td>
-                    <td>{evaluation.resource_id || evaluation.findings || "—"}</td>
+                  <td>{evaluation.resource_id || evaluation.findings || "—"}</td>
                     <td>{new Date(evaluation.last_checked_at || evaluation.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}

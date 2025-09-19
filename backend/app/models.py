@@ -107,3 +107,25 @@ class PolicyEvaluation(Base):
 
     policy: Mapped[Policy] = relationship("Policy", back_populates="evaluations")
     account: Mapped[CloudAccount] = relationship("CloudAccount", back_populates="evaluations")
+
+
+class NotificationCategory(str, enum.Enum):
+    POLICY_VIOLATION = "policy_violation"
+    ACCOUNT_SYNC = "account_sync"
+    BUILD_COMPLETE = "build_complete"
+    SERVICE_PROVISION = "service_provision"
+    BROADCAST = "broadcast"
+
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    type: Mapped[NotificationCategory] = mapped_column(
+        Enum(NotificationCategory), default=NotificationCategory.BROADCAST
+    )
+    action_path: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
