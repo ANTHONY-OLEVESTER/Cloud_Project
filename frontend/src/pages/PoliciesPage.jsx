@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { useCreatePolicy, useDeletePolicy, useEvaluations, usePolicies, useUpdatePolicy } from "../services/hooks";
 
@@ -10,6 +11,7 @@ const statusLabels = {
 };
 
 export default function PoliciesPage() {
+  const navigate = useNavigate();
   const { data: policies = [], isLoading: policiesLoading } = usePolicies();
   const { data: evaluations = [], isLoading: evaluationsLoading } = useEvaluations();
   const createPolicy = useCreatePolicy();
@@ -140,8 +142,8 @@ export default function PoliciesPage() {
           <p>Monitor and manage security policies across your cloud infrastructure.</p>
         </div>
         <div className="page-header__actions">
-          <button className="button" onClick={handleCreatePolicy}>
-            Create policy
+          <button className="button" onClick={() => setShowCreateForm(!showCreateForm)}>
+            {showCreateForm ? "Cancel" : "Create policy"}
           </button>
         </div>
       </div>
@@ -345,19 +347,19 @@ export default function PoliciesPage() {
                       <button
                         type="button"
                         title="View details"
-                        onClick={() => alert(`Policy details for: ${policy.name}\n\nDescription: ${policy.description || "No description available"}\n\nControl ID: ${policy.control_id}`)}
+                        onClick={() => navigate(`/policies/${policy.id}`)}
                       >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M12 5c5 0 9 5 9 7s-4 7-9 7-9-5-9-7 4-7 9-7Zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 2.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z" />
+                          <path d="M12 4.5A7.5 7.5 0 1 1 4.5 12A7.5 7.5 0 0 1 12 4.5zm0 5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
                         </svg>
                       </button>
                       <button
                         type="button"
                         title="Edit policy"
-                        onClick={() => handleEditPolicy(policy)}
+                        onClick={() => startEdit(policy)}
                       >
                         <svg viewBox="0 0 24 24" aria-hidden="true">
-                          <path d="M15.73 3.51a2.5 2.5 0 0 1 3.54 3.54l-9.9 9.9-4.24.7.7-4.24 9.9-9.9Zm-9 15.48h12a1 1 0 1 1 0 2h-12a1 1 0 1 1 0-2Z" />
+                          <path d="M16.862 3.487a2.5 2.5 0 0 1 3.651 0 2.5 2.5 0 0 1 0 3.651L8.25 19.4 3 21l1.6-5.25L16.862 3.487z" />
                         </svg>
                       </button>
                       <button
