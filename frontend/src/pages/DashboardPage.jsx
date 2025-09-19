@@ -9,9 +9,15 @@ function buildPieGradient(compliant, nonCompliant, pending) {
   const total = compliant + nonCompliant + pending || 1;
   const compliantDeg = (compliant / total) * 360;
   const nonCompliantDeg = (nonCompliant / total) * 360;
-  return `conic-gradient(var(--badge-success-text) 0deg ${compliantDeg}deg, var(--badge-danger-text) ${compliantDeg}deg ${
+  
+  // Use more vibrant, distinct colors for better visibility
+  const compliantColor = '#22c55e'; // Bright green
+  const nonCompliantColor = '#ef4444'; // Bright red  
+  const pendingColor = '#f59e0b'; // Bright amber
+  
+  return `conic-gradient(${compliantColor} 0deg ${compliantDeg}deg, ${nonCompliantColor} ${compliantDeg}deg ${
     compliantDeg + nonCompliantDeg
-  }deg, var(--text-subtle) ${compliantDeg + nonCompliantDeg}deg 360deg)`;
+  }deg, ${pendingColor} ${compliantDeg + nonCompliantDeg}deg 360deg)`;
 }
 
 export default function DashboardPage() {

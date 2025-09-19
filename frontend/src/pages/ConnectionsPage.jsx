@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useAccounts, useCreateAccount, useDeleteAccount, useEvaluations, usePolicies, useSyncAccount } from "../services/hooks";
+import { getProviderIcon } from "../components/CloudProviderIcons";
+import { ViewButton, EditButton, DeleteButton, SyncButton, ActionButtonGroup } from "../components/ActionButtons";
 
 const providerOptions = [
   { value: "all", label: "All Providers" },
@@ -226,62 +228,39 @@ export default function ConnectionsPage() {
               return (
                 <div key={account.id} className="connection-card">
                   <div className="connection-card__icon">
-                    <img src={providerIcons[account.provider] ?? providerIcons.aws} alt={`${account.provider} logo`} />
+                    {getProviderIcon(account.provider, 32)}
                   </div>
                   <div className="connection-card__meta">
-                    <strong>{account.display_name}</strong>
+                    <strong>{account.name}</strong>
                     <span>
-                      Account: {account.external_id} · Connected {new Date(account.created_at).toLocaleDateString()}
+                      Account: {account.accountId} · {account.status === 'connected' ? 'Connected' : 'Pending'} {new Date(account.lastSync).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="connection-card__stats">
                     <span>
-                      <strong>{policyCount}</strong> policies
+                      <strong>{account.policies || policyCount}</strong> policies
                     </span>
                     <span>
-                      <strong>{resourceCount}</strong> resources
+                      <strong>{account.resources || resourceCount}</strong> resources
                     </span>
                   </div>
                   <StatusChip status={account.status} />
                   <div className="connection-card__actions">
-                    <button
-                      type="button"
-                      title="Sync"
-                      onClick={() => handleSync(account.id)}
-                      disabled={syncAccount.isPending}
-                    >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4 4v5h5M20 20v-5h-5M5.64 18.36A9 9 0 0 0 19 15.9l1.44 1.44A11 11 0 0 1 3.2 13.2l2.44 2.44ZM18.36 5.64A9 9 0 0 0 5 8.1L3.56 6.66A11 11 0 0 1 20.8 10.8l-2.44-2.44Z" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      title="View Details"
-                      onClick={() => navigate(`/services/${account.provider}`, { state: { account } })}
-                    >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 4.5A7.5 7.5 0 1 1 4.5 12A7.5 7.5 0 0 1 12 4.5zm0 5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      title="Edit"
-                      onClick={() => handleSettings(account)}
-                    >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M16.862 3.487a2.5 2.5 0 0 1 3.651 0 2.5 2.5 0 0 1 0 3.651L8.25 19.4 3 21l1.6-5.25L16.862 3.487z" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      title="Remove"
-                      onClick={() => handleDelete(account.id)}
-                      disabled={deleteAccount.isPending}
-                    >
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M6 6h12M9 6l.34-1.37A2 2 0 0 1 11.27 3h1.46a2 2 0 0 1 1.93 1.63L15 6m4 0v13.25A2.75 2.75 0 0 1 16.25 22h-8.5A2.75 2.75 0 0 1 5 19.25V6h14Zm-9 4a1 1 0 1 0-2 0v7a1 1 0 1 0 2 0v-7Zm6 0a1 1 0 1 0-2 0v7a1 1 0 1 0 2 0v-7Z" />
-                      </svg>
-                    </button>
+                    <ActionButtonGroup>
+                      <SyncButton 
+                        onClick={() => handleSync(account.id)}
+                        isLoading={syncAccount.isPending}
+                      />
+                      <ViewButton 
+                        onClick={() => navigate(`/services/${account.provider}`, { state: { account } })}
+                      />
+                      <EditButton 
+                        onClick={() => handleSettings(account)}
+                      />
+                      <DeleteButton 
+                        onClick={() => handleDelete(account.id)}
+                      />
+                    </ActionButtonGroup>
                   </div>
                 </div>
               );

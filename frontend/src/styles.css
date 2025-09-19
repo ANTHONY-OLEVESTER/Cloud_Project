@@ -1761,7 +1761,9 @@ select {
 
   border-radius: 50%;
 
-  background: conic-gradient(var(--badge-success-text) 0deg, var(--badge-success-text) 240deg, var(--badge-danger-text) 240deg, var(--badge-danger-text) 288deg, var(--text-subtle) 288deg);
+  background: conic-gradient(var(--badge-success-text) 0deg, var(--badge-success-text) 240deg, var(--badge-danger-text) 240deg, var(--badge-danger-text) 288deg, var(--text-subtle) 288deg);
+
+  /* Note: Dynamic background will override this via inline styles */
 
 }
 
@@ -2396,3 +2398,176 @@ select {
 
 }
 
+/* Additional Radiant Color Themes */
+[data-theme="purple"] {
+  --accent-primary: #7c3aed;
+  --accent-secondary: #a855f7;
+  --accent-text: #7c3aed;
+  --sidebar-link-active: #7c3aed;
+  --sidebar-link-active-bg: linear-gradient(135deg, #7c3aed, #a855f7);
+  --hero-eyebrow-color: #5b21b6;
+  --accent-shadow: rgba(124, 58, 237, 0.25);
+}
+
+[data-theme="emerald"] {
+  --accent-primary: #059669;
+  --accent-secondary: #10b981;
+  --accent-text: #059669;
+  --sidebar-link-active: #059669;
+  --sidebar-link-active-bg: linear-gradient(135deg, #059669, #10b981);
+  --hero-eyebrow-color: #047857;
+  --accent-shadow: rgba(5, 150, 105, 0.22);
+}
+
+[data-theme="crimson"] {
+  --accent-primary: #dc2626;
+  --accent-secondary: #ef4444;
+  --accent-text: #dc2626;
+  --sidebar-link-active: #dc2626;
+  --sidebar-link-active-bg: linear-gradient(135deg, #dc2626, #ef4444);
+/* Enhanced Theme Selector */
+.theme-selector-enhanced {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 500;
+  box-shadow: var(--accent-shadow) 0px 4px 12px;
+  transition: all 0.2s ease;
+}
+
+.theme-selector-enhanced:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--accent-shadow) 0px 6px 16px;
+}
+
+.theme-selector-enhanced option {
+  background: white;
+  color: #1f2937;
+  padding: 8px;
+}
+
+/* Enhanced Icons for Sidebar */
+.sidebar nav a img {
+  width: 20px !important;
+  height: 20px !important;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+
+.sidebar nav a:hover img {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.sidebar nav a.active img {
+  opacity: 1;
+  filter: brightness(1.2);
+}
+
+/* Enhanced Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: white;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.action-button:hover {
+  background: var(--accent-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-color: var(--accent-primary);
+}
+
+.action-button.view { color: #3b82f6; }
+.action-button.edit { color: #f59e0b; }
+.action-button.delete { color: #ef4444; }
+
+.action-button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Enhanced Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Enhanced Sync Button */
+.sync-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--accent-shadow) 0px 2px 8px;
+}
+
+.sync-button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--accent-shadow) 0px 4px 12px;
+}
+
+.sync-button:active {
+  transform: translateY(0);
+}
+
+.sync-button.syncing {
+  background: #6b7280;
+  cursor: not-allowed;
+}
+
+.sync-button.syncing svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+  --hero-eyebrow-color: #991b1b;
+  --accent-shadow: rgba(220, 38, 38, 0.2);
+}
