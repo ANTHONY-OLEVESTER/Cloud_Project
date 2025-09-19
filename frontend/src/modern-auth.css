@@ -1,0 +1,186 @@
+/* ========================================= */
+/* MODERN UI IMPROVEMENTS */
+/* ========================================= */
+
+.auth-brand-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.auth-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  color: var(--text-strong) !important;
+}
+
+.auth-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-brand-text strong {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 4px;
+}
+
+.auth-brand-text span {
+  color: #718096;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.auth-card {
+  background: #ffffff !important;
+  border: none !important;
+  border-radius: 24px !important;
+  padding: 48px 40px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 32px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.auth-card__header h1 {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: #1a202c !important;
+  margin: 0 !important;
+}
+
+.auth-card__header p {
+  color: #4a5568 !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  margin: 12px 0 0 !important;
+}
+
+.form__input {
+  background: #f7fafc !important;
+  border: 2px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  color: #2d3748 !important;
+  font-size: 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.form__input:focus {
+  outline: none !important;
+  border-color: #667eea !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+.form__label {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #2d3748 !important;
+  margin-bottom: 8px !important;
+}
+
+.button {
+  padding: 16px 24px !important;
+  border-radius: 12px !important;
+  border: none !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.3) !important;
+}
+
+.button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 20px 25px -5px rgba(102, 126, 234, 0.4) !important;
+}
+
+.button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.auth-card__link {
+  color: #667eea !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  transition: color 0.2s ease !important;
+}
+
+.auth-card__link:hover {
+  color: #764ba2 !important;
+}
+
+.input-with-toggle {
+  position: relative !important;
+}
+
+.input-with-toggle .auth-card__link {
+  position: absolute !important;
+  right: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 14px !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+}
+
+.input-with-toggle .auth-card__link:hover {
+  background: #f7fafc !important;
+}
+
+.auth-card__actions {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: #4a5568 !important;
+}
+
+.auth-card__checkbox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-weight: 500 !important;
+}
+
+.auth-card__footer {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  color: #718096 !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+
+.auth-card__footer span:first-child {
+  font-weight: 500 !important;
+  color: #4a5568 !important;
+}
+
+.auth-panel {
+  background: #ffffff !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.auth-layout {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
