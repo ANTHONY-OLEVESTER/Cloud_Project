@@ -1,6 +1,8 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 import { useAuth } from "../context/AuthContext";
+import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "../services/hooks";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 const navItems = [
@@ -55,10 +57,33 @@ export default function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [showNotifications, setShowNotifications] = useState(false);
+  
+  const { data: notifications = [] } = useNotifications();
+  const markNotificationRead = useMarkNotificationRead();
+  const markAllRead = useMarkAllNotificationsRead();
+
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   const handleLogout = () => {
     logout();
     navigate("/login", { replace: true });
+  };
+
+  const handleNotificationClick = (notification) => {
+    if (!notification.is_read) {
+      markNotificationRead.mutate(notification.id);
+    }
+    setShowNotifications(false);
+    
+    // Navigate based on notification type
+    if (notification.type === 'policy_violation') {
+      navigate('/policies');
+    } else if (notification.type === 'account_sync') {
+      navigate('/connections');
+    } else if (notification.type === 'build_complete') {
+      navigate('/');
+    }
   };
 
   return (
@@ -93,9 +118,6 @@ export default function MainLayout() {
             <span>All systems operational</span>
           </div>
         </div>
-        <button className="button sidebar__logout" type="button" onClick={handleLogout}>
-          Sign out
-        </button>
       </aside>
       <div className="main-area">
         <header className="topbar">
@@ -107,12 +129,71 @@ export default function MainLayout() {
           </form>
           <div className="topbar__right">
             <ThemeSwitcher />
-            <button className="icon-button" type="button" aria-label="Notifications">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 2a4 4 0 0 1 4 4v1.26c1.73.83 3 2.6 3 4.74v4l1.2 1.6c.52.7.02 1.66-.84 1.66H4.64c-.86 0-1.36-.96-.84-1.66L5 16v-4c0-2.14 1.27-3.9 3-4.74V6a4 4 0 0 1 4-4Zm0 20a2.5 2.5 0 0 1-2.45-2h4.9A2.5 2.5 0 0 1 12 22Z" />
-              </svg>
-              <span className="icon-button__badge">3</span>
-            </button>
+            <div className="notification-container">
+              <button 
+                className="icon-button" 
+                type="button" 
+                aria-label="Notifications"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2a4 4 0 0 1 4 4v1.26c1.73.83 3 2.6 3 4.74v4l1.2 1.6c.52.7.02 1.66-.84 1.66H4.64c-.86 0-1.36-.96-.84-1.66L5 16v-4c0-2.14 1.27-3.9 3-4.74V6a4 4 0 0 1 4-4Zm0 20a2.5 2.5 0 0 1-2.45-2h4.9A2.5 2.5 0 0 1 12 22Z" />
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="icon-button__badge">{unreadCount}</span>
+                )}
+              </button>
+              
+              {showNotifications && (
+                <div className="notification-dropdown">
+                  <div className="notification-dropdown__header">
+                    <h3>Notifications</h3>
+                    {unreadCount > 0 && (
+                      <button 
+                        className="text-button"
+                        onClick={() => markAllRead.mutate()}
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+                  <div className="notification-dropdown__list">
+                    {notifications.length === 0 ? (
+                      <div className="notification-item notification-item--empty">
+                        No notifications
+                      </div>
+                    ) : (
+                      notifications.slice(0, 5).map((notification) => (
+                        <div
+                          key={notification.id}
+                          className={`notification-item ${!notification.is_read ? 'notification-item--unread' : ''}`}
+                          onClick={() => handleNotificationClick(notification)}
+                        >
+                          <div className="notification-item__icon">
+                            {notification.type === 'policy_violation' && '⚠️'}
+                            {notification.type === 'account_sync' && '🔄'}
+                            {notification.type === 'build_complete' && '✅'}
+                            {!['policy_violation', 'account_sync', 'build_complete'].includes(notification.type) && '📢'}
+                          </div>
+                          <div className="notification-item__content">
+                            <div className="notification-item__title">{notification.title}</div>
+                            <div className="notification-item__message">{notification.message}</div>
+                            <div className="notification-item__time">
+                              {new Date(notification.created_at).toLocaleString()}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {notifications.length > 5 && (
+                    <div className="notification-dropdown__footer">
+                      <button className="text-button">View all notifications</button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
             <div className="topbar__user">
               <div className="topbar__avatar">A</div>
               <div>
@@ -120,6 +201,12 @@ export default function MainLayout() {
                 <span>Security Ops</span>
               </div>
             </div>
+            <button className="button topbar__logout" type="button" onClick={handleLogout} title="Sign out">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M16 17l5-5-5-5v3H9v4h7v3zM14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z" />
+              </svg>
+              <span className="topbar__logout-text">Sign out</span>
+            </button>
           </div>
         </header>
         <div className="main-content">

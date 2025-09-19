@@ -7,6 +7,7 @@ const queryKeys = {
   accounts: ["accounts"],
   policies: ["policies"],
   evaluations: ["evaluations"],
+  notifications: ["notifications"],
 };
 
 export function useDashboard() {
@@ -103,5 +104,29 @@ export function useLogin() {
 export function useSignup() {
   return useMutation({
     mutationFn: (payload) => apiClient.post("auth/register", payload),
+  });
+}
+
+export function useNotifications() {
+  return useQuery({
+    queryKey: queryKeys.notifications,
+    queryFn: () => apiClient.get("notifications"),
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+}
+
+export function useMarkNotificationRead() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (notificationId) => apiClient.patch(`notifications/${notificationId}/read`),
+    onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
+  });
+}
+
+export function useMarkAllNotificationsRead() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => apiClient.patch("notifications/mark-all-read"),
+    onSuccess: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
   });
 }

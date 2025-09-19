@@ -35,7 +35,14 @@ export default function ConnectionsPage() {
   const [query, setQuery] = useState("");
   const [filterProvider, setFilterProvider] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [formState, setFormState] = useState({ provider: "aws", external_id: "", display_name: "" });
+  const [formState, setFormState] = useState({ 
+    provider: "aws", 
+    external_id: "", 
+    display_name: "", 
+    role_arn: "", 
+    tenant_id: "", 
+    region: "" 
+  });
   const [showAddForm, setShowAddForm] = useState(false);
 
   const connectedProviders = accounts.filter((account) => account.status === "connected").length;
@@ -61,7 +68,14 @@ export default function ConnectionsPage() {
     event.preventDefault();
     createAccount.mutate(formState, {
       onSuccess: () => {
-        setFormState({ provider: "aws", external_id: "", display_name: "" });
+        setFormState({ 
+          provider: "aws", 
+          external_id: "", 
+          display_name: "", 
+          role_arn: "", 
+          tenant_id: "", 
+          region: "" 
+        });
         setShowAddForm(false);
       },
     });
@@ -190,14 +204,25 @@ export default function ConnectionsPage() {
           <p>Loading accounts…</p>
         ) : isError ? (
           <p style={{ color: "#b91c1c" }}>{error?.message ?? "Failed to load accounts."}</p>
+        ) : filteredAccounts.length === 0 ? (
+          <div className="empty-state">
+            <h3>No connections found</h3>
+            <p>Add a cloud provider connection to get started.</p>
+          </div>
         ) : (
           <div className="connections-grid">
             {filteredAccounts.map((account) => {
-              const providerEvaluations = evaluations.filter(
-                (evaluation) => evaluation.account?.provider === account.provider
+              // Better account-to-evaluation mapping
+              const accountPolicies = policies.filter(policy => policy.provider === account.provider);
+              const accountEvaluations = evaluations.filter(evaluation => 
+                evaluation.account_id === account.id || 
+                (evaluation.account?.id === account.id) ||
+                (evaluation.account?.provider === account.provider && evaluation.account?.external_id === account.external_id)
               );
-              const policyCount = providerEvaluations.length;
-              const resourceCount = providerEvaluations.reduce((acc, evaluation) => acc + (evaluation.resources || 1), 0);
+              const policyCount = accountPolicies.length;
+              const resourceCount = accountEvaluations.reduce((acc, evaluation) => 
+                acc + (evaluation.resource_count || evaluation.resources || 1), 0
+              );
               return (
                 <div key={account.id} className="connection-card">
                   <div className="connection-card__icon">
@@ -231,11 +256,20 @@ export default function ConnectionsPage() {
                     </button>
                     <button
                       type="button"
-                      title="Settings"
+                      title="View Details"
+                      onClick={() => navigate(`/services/${account.provider}`, { state: { account } })}
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 4.5A7.5 7.5 0 1 1 4.5 12A7.5 7.5 0 0 1 12 4.5zm0 5.5a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      title="Edit"
                       onClick={() => handleSettings(account)}
                     >
                       <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M10.21 2.25c.46-1.5 2.54-1.5 3 0l.46 1.5c.18.57.75.94 1.35.84l1.53-.25c1.53-.25 2.5 1.63 1.45 2.78l-1.06 1.16c-.4.44-.4 1.11 0 1.55l1.06 1.16c1.05 1.15.08 3.03-1.45 2.78l-1.53-.25c-.6-.1-1.17.27-1.35.84l-.46 1.5c-.46 1.5-2.54 1.5-3 0l-.46-1.5c-.18-.57-.75-.94-1.35-.84l-1.53.25c-1.53.25-2.5-1.63-1.45-2.78l1.06-1.16c.4-.44.4-1.11 0-1.55L5.42 7.12c-1.05-1.15-.08-3.03 1.45-2.78l1.53.25c.6.1 1.17-.27 1.35-.84l.46-1.5ZM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" />
+                        <path d="M16.862 3.487a2.5 2.5 0 0 1 3.651 0 2.5 2.5 0 0 1 0 3.651L8.25 19.4 3 21l1.6-5.25L16.862 3.487z" />
                       </svg>
                     </button>
                     <button
