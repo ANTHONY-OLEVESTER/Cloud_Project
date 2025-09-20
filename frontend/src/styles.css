@@ -1,6 +1,6 @@
 .app-shell {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: 280px minmax(0, 1fr);
   min-height: 100vh;
   background: var(--bg-body);
   transition: transform var(--transition-base);
@@ -1227,14 +1227,12 @@ textarea.form__input:focus {
   .button {
     width: 100%;
   }
-}
+  }
 
-  font-size: 0.75rem;
-
-  font-weight: 600;
-
-  border: 1px solid transparent;
-
+
+
+  .chip--success {
+
 }
 
 
@@ -1754,19 +1752,12 @@ textarea.form__input:focus {
 
 
 .chart-placeholder {
-
-  background: var(--bg-subtle);
-
-  border: 1px dashed var(--border-soft);
-
-  border-radius: 20px;
-
-  min-height: 220px;
-
-  display: grid;
-
-  place-items: center;
-
+@media (max-width: 960px) {
+  .auth-visual {
+    min-height: 520px;
+    padding: 60px 48px;
+  }
+}
   color: var(--text-muted);
 
 }
