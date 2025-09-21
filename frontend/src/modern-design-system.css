@@ -32,6 +32,11 @@
   --info-strong: #38bdf8;
   --info-soft: rgba(56, 189, 248, 0.18);
 
+  /* Badge colors for charts */
+  --badge-success-text: #10b981;
+  --badge-danger-text: #ef4444;
+  --badge-warn-text: #f59e0b;
+
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 26px;
