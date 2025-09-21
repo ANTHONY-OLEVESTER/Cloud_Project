@@ -40,6 +40,16 @@ async function request(path, options = {}) {
   });
 
   if (!response.ok) {
+    // Handle 401 Unauthorized - clear token and redirect to login
+    if (response.status === 401) {
+      window.localStorage.removeItem("cloud_guard_token");
+      // Redirect to login if not already there
+      if (!window.location.pathname.includes('/login')) {
+        const basePath = import.meta.env.PROD ? '/Cloud_Project' : '';
+        window.location.href = `${basePath}/login`;
+      }
+    }
+
     const errorBody = await response.json().catch(() => ({}));
     const error = new Error(errorBody.detail ?? "Request failed");
     error.status = response.status;
