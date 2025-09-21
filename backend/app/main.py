@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 
-from fastapi import APIRouter, FastAPI
+from fastapi import APIRouter, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 
 from app import crud
 from app.config import settings
@@ -13,6 +14,12 @@ from app.security import PasswordManager
 from app.seed import demo_records
 
 app = FastAPI(title=settings.app_name)
+
+# Trust Railway's proxy headers
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*"]  # Railway handles the host validation
+)
 
 app.add_middleware(
     CORSMiddleware,
