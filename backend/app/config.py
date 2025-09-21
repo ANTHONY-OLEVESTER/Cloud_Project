@@ -5,12 +5,13 @@ from pydantic_settings import BaseSettings
 
 
 def _default_cors() -> list[str]:
-    return ["http://localhost:5173"]
+    return ["http://localhost:5173", "https://your-frontend-domain.vercel.app", "https://your-frontend-domain.netlify.app"]
 
 
 class Settings(BaseSettings):
     app_name: str = Field(default="Cloud Guard Platform", alias="APP_NAME")
     database_url: str = Field(default="sqlite:///./cloud_guard.db", alias="DATABASE_URL")
+    port: int = Field(default=8000, alias="PORT")
     demo_seed: bool = Field(default=True, alias="DEMO_SEED")
     cors_origins: list[str] = Field(default_factory=_default_cors, alias="CORS_ORIGINS")
     jwt_secret: str = Field(default="change-me", alias="JWT_SECRET")
