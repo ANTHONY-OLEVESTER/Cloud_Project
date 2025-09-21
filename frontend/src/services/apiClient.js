@@ -2,6 +2,7 @@ const DEFAULT_API = "http://localhost:8000/api";
 const PRODUCTION_API = "https://your-railway-app-name.up.railway.app/api";
 
 // Use environment variable, fallback to production URL if in production mode, otherwise localhost
+// Updated for GitHub Pages deployment
 const getApiUrl = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
