@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.PROD ? '/Cloud_Project' : '/'}>
             <App />
           </BrowserRouter>
         </AuthProvider>
