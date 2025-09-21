@@ -1,5 +1,20 @@
 const DEFAULT_API = "http://localhost:8000/api";
-const API_BASE_URL = (import.meta.env.VITE_API_URL ?? DEFAULT_API).replace(/\/$/, "");
+const PRODUCTION_API = "https://your-railway-app-name.up.railway.app/api";
+
+// Use environment variable, fallback to production URL if in production mode, otherwise localhost
+const getApiUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+
+  if (import.meta.env.PROD) {
+    return PRODUCTION_API;
+  }
+
+  return DEFAULT_API;
+};
+
+const API_BASE_URL = getApiUrl().replace(/\/$/, "");
 
 function buildUrl(path) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
