@@ -59,7 +59,7 @@ export default function LoginPage() {
         </div>
         <div className="auth-card">
           <div className="auth-card__header">
-            <h1>Welcome back</h1>
+            <h1>Welcome back to Cloud Guard</h1>
             <p>Sign in to orchestrate remediation and compliance intelligence across every cloud perimeter.</p>
           </div>
           <form className="form" onSubmit={handleSubmit}>
