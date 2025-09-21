@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import PageHero from "../components/PageHero";
 import settingsIllustration from "../assets/illustrations/settings-hero.svg";
+import { useUserProfile, useUpdateUserProfile } from "../services/hooks";
 
 const tabs = [
   { id: "account", label: "Account" },
@@ -14,16 +15,33 @@ const tabs = [
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("account");
   const [profile, setProfile] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@company.com",
-    company: "Acme Corporation",
-    timezone: "Eastern Time (UTC-5)",
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
+    timezone: "UTC",
     dateFormat: "MM/DD/YYYY",
     reportFrequency: "Weekly",
   });
-  const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
+
+  const { data: userProfile, isLoading: profileLoading } = useUserProfile();
+  const updateProfileMutation = useUpdateUserProfile();
+
+  // Update local profile state when user data loads
+  useEffect(() => {
+    if (userProfile) {
+      setProfile({
+        firstName: userProfile.first_name || "",
+        lastName: userProfile.last_name || "",
+        email: userProfile.email || "",
+        company: userProfile.company || "",
+        timezone: userProfile.timezone || "UTC",
+        dateFormat: userProfile.date_format || "MM/DD/YYYY",
+        reportFrequency: userProfile.report_frequency || "Weekly",
+      });
+    }
+  }, [userProfile]);
 
   const handleChange = (field) => (event) => {
     setProfile((prev) => ({ ...prev, [field]: event.target.value }));
@@ -32,20 +50,24 @@ export default function SettingsPage() {
   };
 
   const handleSaveChanges = async () => {
-    setIsSaving(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const updateData = {
+        first_name: profile.firstName,
+        last_name: profile.lastName,
+        company: profile.company,
+        timezone: profile.timezone,
+        date_format: profile.dateFormat,
+        report_frequency: profile.reportFrequency,
+        // Update full_name from first and last name
+        full_name: `${profile.firstName} ${profile.lastName}`.trim() || userProfile?.full_name
+      };
 
-      // In a real app, this would be an API call:
-      // await apiClient.put('/users/profile', profile);
-
+      await updateProfileMutation.mutateAsync(updateData);
       setSaveMessage("Settings saved successfully!");
       setTimeout(() => setSaveMessage(""), 3000);
     } catch (error) {
       setSaveMessage("Failed to save settings. Please try again.");
-    } finally {
-      setIsSaving(false);
+      console.error("Profile update error:", error);
     }
   };
 
@@ -77,7 +99,10 @@ export default function SettingsPage() {
             <h2>Profile information</h2>
             <p className="card__meta">Update your personal information and account details.</p>
           </div>
-          <div className="form-grid">
+          {profileLoading ? (
+            <div>Loading profile...</div>
+          ) : (
+            <div className="form-grid">
             <div className="form__group">
               <label className="form__label" htmlFor="firstName">
                 First name
@@ -94,7 +119,7 @@ export default function SettingsPage() {
               <label className="form__label" htmlFor="email">
                 Email address
               </label>
-              <input id="email" className="form__input" value={profile.email} onChange={handleChange("email")} />
+              <input id="email" className="form__input" value={profile.email} disabled />
             </div>
             <div className="form__group">
               <label className="form__label" htmlFor="company">
@@ -107,6 +132,7 @@ export default function SettingsPage() {
                 Timezone
               </label>
               <select id="timezone" className="form__select" value={profile.timezone} onChange={handleChange("timezone")}>
+                <option value="UTC">UTC</option>
                 <option value="Eastern Time (UTC-5)">Eastern Time (UTC-5)</option>
                 <option value="Central Time (UTC-6)">Central Time (UTC-6)</option>
                 <option value="Pacific Time (UTC-8)">Pacific Time (UTC-8)</option>
@@ -144,14 +170,15 @@ export default function SettingsPage() {
               </select>
             </div>
           </div>
+          )}
           <div className="settings-footer">
             <button
               className="button"
               type="button"
               onClick={handleSaveChanges}
-              disabled={isSaving}
+              disabled={updateProfileMutation.isPending || profileLoading}
             >
-              {isSaving ? "Saving..." : "Save changes"}
+              {updateProfileMutation.isPending ? "Saving..." : "Save changes"}
             </button>
             {saveMessage && (
               <div

@@ -166,3 +166,20 @@ export function useMarkAllNotificationsRead() {
     onSettled: () => client.invalidateQueries({ queryKey: queryKeys.notifications }),
   });
 }
+
+export function useUserProfile() {
+  return useQuery({
+    queryKey: ["user", "profile"],
+    queryFn: () => apiClient.get("auth/profile"),
+  });
+}
+
+export function useUpdateUserProfile() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (profileData) => apiClient.put("auth/profile", profileData),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ["user", "profile"] });
+    },
+  });
+}
