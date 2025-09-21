@@ -18,6 +18,12 @@ from app.models import (
 class UserBase(BaseModel):
     email: EmailStr
     full_name: str = Field(min_length=1, max_length=255)
+    first_name: str | None = Field(None, max_length=100)
+    last_name: str | None = Field(None, max_length=100)
+    company: str | None = Field(None, max_length=255)
+    timezone: str | None = Field(None, max_length=50)
+    date_format: str | None = Field(None, max_length=20)
+    report_frequency: str | None = Field(None, max_length=20)
 
 
 class UserCreate(UserBase):
@@ -36,6 +42,16 @@ class UserRead(UserBase):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class UserUpdate(BaseModel):
+    full_name: str | None = Field(None, min_length=1, max_length=255)
+    first_name: str | None = Field(None, max_length=100)
+    last_name: str | None = Field(None, max_length=100)
+    company: str | None = Field(None, max_length=255)
+    timezone: str | None = Field(None, max_length=50)
+    date_format: str | None = Field(None, max_length=20)
+    report_frequency: str | None = Field(None, max_length=20)
 
 
 # Account schemas

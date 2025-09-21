@@ -37,6 +37,15 @@ def authenticate_user(db: Session, *, email: str, password: str, password_verifi
     return None
 
 
+def update_user(db: Session, *, user: models.User, user_update: schemas.UserUpdate) -> models.User:
+    update_data = user_update.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(user, field, value)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
 # -- Account helpers ---------------------------------------------------------
 def create_account(db: Session, account_in: schemas.AccountCreate) -> models.CloudAccount:
     account = models.CloudAccount(**account_in.model_dump())

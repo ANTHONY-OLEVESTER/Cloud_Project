@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, status
+from jose import jwt
 from sqlalchemy.orm import Session
 
-from app import crud, schemas
-from app.deps import get_db, get_password_manager
+from app import crud, models, schemas
+from app.config import settings
+from app.deps import get_current_user, get_db, get_password_manager
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -26,7 +30,15 @@ def register_user(
     return user
 
 
-@router.post("/login", response_model=schemas.UserRead)
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=settings.access_token_expire_minutes)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+    return encoded_jwt
+
+
+@router.post("/login")
 def login_user(
     credentials: schemas.UserLogin,
     db: Session = Depends(get_db),
@@ -40,4 +52,26 @@ def login_user(
     )
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
-    return user
+
+    access_token = create_access_token(data={"sub": user.email})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user
+    }
+
+
+@router.get("/profile", response_model=schemas.UserRead)
+def get_user_profile(
+    current_user: models.User = Depends(get_current_user)
+):
+    return current_user
+
+
+@router.put("/profile", response_model=schemas.UserRead)
+def update_user_profile(
+    profile_update: schemas.UserUpdate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    return crud.update_user(db, user=current_user, user_update=profile_update)
