@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 
 
 def _default_cors() -> list[str]:
-    return ["http://localhost:5173", "https://your-frontend-domain.vercel.app", "https://your-frontend-domain.netlify.app"]
+    return ["http://localhost:5173", "https://anthony-olevester.github.io"]
 
 
 class Settings(BaseSettings):
