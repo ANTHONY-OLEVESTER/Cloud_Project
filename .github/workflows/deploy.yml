@@ -3,7 +3,8 @@ name: Deploy Frontend to GitHub Pages
 
 on:
   push:
-    branches: [ "Cloud_services" ]
+    branches:
+      - "Cloud_services"
   workflow_dispatch:
 
 permissions:
