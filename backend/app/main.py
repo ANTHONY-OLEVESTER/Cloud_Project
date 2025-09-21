@@ -36,6 +36,14 @@ def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/debug/cors")
+def debug_cors() -> dict[str, object]:
+    return {
+        "cors_origins": settings.cors_origins,
+        "cors_origins_type": type(settings.cors_origins).__name__
+    }
+
+
 @app.on_event("startup")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)
