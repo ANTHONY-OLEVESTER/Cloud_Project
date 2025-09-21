@@ -96,7 +96,7 @@ export default function SettingsPage() {
       {activeTab === "account" && (
         <section className="card settings-section">
           <div>
-            <h2>Profile information</h2>
+            <h2>Profile Information</h2>
             <p className="card__meta">Update your personal information and account details.</p>
           </div>
           {profileLoading ? (
