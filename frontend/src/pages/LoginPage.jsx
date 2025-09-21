@@ -32,7 +32,7 @@ export default function LoginPage() {
       { email: formState.email.trim(), password: formState.password },
       {
         onSuccess: (response) => {
-          const token = response?.token ?? "demo-token";
+          const token = response?.access_token ?? "demo-token";
           setAuthToken(token);
           const redirectTo = location.state?.from?.pathname ?? "/";
           runAppTransition("enter", () => navigate(redirectTo, { replace: true }));

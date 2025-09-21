@@ -25,7 +25,7 @@ export default function SettingsPage() {
   });
   const [saveMessage, setSaveMessage] = useState("");
 
-  const { data: userProfile, isLoading: profileLoading } = useUserProfile();
+  const { data: userProfile, isLoading: profileLoading, error: profileError } = useUserProfile();
   const updateProfileMutation = useUpdateUserProfile();
 
   // Update local profile state when user data loads
@@ -101,6 +101,10 @@ export default function SettingsPage() {
           </div>
           {profileLoading ? (
             <div>Loading profile...</div>
+          ) : profileError ? (
+            <div style={{ color: "var(--danger-strong)", padding: "16px", borderRadius: "8px", background: "var(--danger-soft)" }}>
+              Error loading profile: {profileError.message || "Failed to load user data. Please try refreshing or logging in again."}
+            </div>
           ) : (
             <div className="form-grid">
             <div className="form__group">
