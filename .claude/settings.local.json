@@ -11,7 +11,8 @@
       "Bash(git reset:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "WebFetch(domain:cloudproject-production-55e3.up.railway.app)"
+      "WebFetch(domain:cloudproject-production-55e3.up.railway.app)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
