@@ -34,7 +34,7 @@ jobs:
       - name: Build
         run: cd frontend && npm run build
         env:
-          VITE_API_URL: https://your-railway-app-name.up.railway.app/api
+          VITE_API_URL: https://cloudproject-production-55e3.up.railway.app/api
           NODE_ENV: production
 
       - name: Setup Pages

@@ -1,5 +1,5 @@
 const DEFAULT_API = "http://localhost:8000/api";
-const PRODUCTION_API = "https://your-railway-app-name.up.railway.app/api";
+const PRODUCTION_API = "https://cloudproject-production-55e3.up.railway.app/api";
 
 // Use environment variable, fallback to production URL if in production mode, otherwise localhost
 // Updated for GitHub Pages deployment
