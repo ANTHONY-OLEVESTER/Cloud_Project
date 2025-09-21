@@ -27,11 +27,15 @@ class Settings(BaseSettings):
     @field_validator("cors_origins", mode="before")
     @classmethod
     def parse_cors(cls, value: object) -> list[str]:
-        if isinstance(value, str):
-            return [origin.strip() for origin in value.split(",") if origin.strip()]
-        if value is None:
+        if value is None or value == "":
             return _default_cors()
-        return list(value)
+        if isinstance(value, str):
+            # Handle comma-separated string format (Railway environment variables)
+            return [origin.strip() for origin in value.split(",") if origin.strip()]
+        if isinstance(value, list):
+            return value
+        # Fallback to default if we can't parse it
+        return _default_cors()
 
 
 settings = Settings()
