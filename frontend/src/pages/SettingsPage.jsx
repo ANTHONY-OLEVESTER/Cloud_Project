@@ -106,74 +106,76 @@ export default function SettingsPage() {
               Error loading profile: {profileError.message || "Failed to load user data. Please try refreshing or logging in again."}
             </div>
           ) : (
-            <div className="form-grid">
-            <div className="form__group">
-              <label className="form__label" htmlFor="firstName">
-                First name
-              </label>
-              <input id="firstName" className="form__input" value={profile.firstName} onChange={handleChange("firstName")} />
-            </div>
-            <div className="form__group">
-              <label className="form__label" htmlFor="lastName">
-                Last name
-              </label>
-              <input id="lastName" className="form__input" value={profile.lastName} onChange={handleChange("lastName")} />
-            </div>
-            <div className="form__group">
-              <label className="form__label" htmlFor="email">
-                Email address
-              </label>
-              <input id="email" className="form__input" value={profile.email} disabled />
-            </div>
-            <div className="form__group">
-              <label className="form__label" htmlFor="company">
-                Company
-              </label>
-              <input id="company" className="form__input" value={profile.company} onChange={handleChange("company")} />
-            </div>
-            <div className="form__group">
-              <label className="form__label" htmlFor="timezone">
-                Timezone
-              </label>
-              <select id="timezone" className="form__select" value={profile.timezone} onChange={handleChange("timezone")}>
-                <option value="UTC">UTC</option>
-                <option value="Eastern Time (UTC-5)">Eastern Time (UTC-5)</option>
-                <option value="Central Time (UTC-6)">Central Time (UTC-6)</option>
-                <option value="Pacific Time (UTC-8)">Pacific Time (UTC-8)</option>
-              </select>
-            </div>
-          </div>
-          <div>
-            <h3>Account preferences</h3>
-            <p className="card__meta">Configure reporting and dashboard defaults.</p>
-          </div>
-          <div className="form-grid">
-            <div className="form__group">
-              <label className="form__label" htmlFor="dateFormat">
-                Date format
-              </label>
-              <select id="dateFormat" className="form__select" value={profile.dateFormat} onChange={handleChange("dateFormat")}>
-                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-              </select>
-            </div>
-            <div className="form__group">
-              <label className="form__label" htmlFor="reportFrequency">
-                Default report frequency
-              </label>
-              <select
-                id="reportFrequency"
-                className="form__select"
-                value={profile.reportFrequency}
-                onChange={handleChange("reportFrequency")}
-              >
-                <option value="Daily">Daily</option>
-                <option value="Weekly">Weekly</option>
-                <option value="Monthly">Monthly</option>
-              </select>
-            </div>
-          </div>
+            <>
+              <div className="form-grid">
+                <div className="form__group">
+                  <label className="form__label" htmlFor="firstName">
+                    First name
+                  </label>
+                  <input id="firstName" className="form__input" value={profile.firstName} onChange={handleChange("firstName")} />
+                </div>
+                <div className="form__group">
+                  <label className="form__label" htmlFor="lastName">
+                    Last name
+                  </label>
+                  <input id="lastName" className="form__input" value={profile.lastName} onChange={handleChange("lastName")} />
+                </div>
+                <div className="form__group">
+                  <label className="form__label" htmlFor="email">
+                    Email address
+                  </label>
+                  <input id="email" className="form__input" value={profile.email} disabled />
+                </div>
+                <div className="form__group">
+                  <label className="form__label" htmlFor="company">
+                    Company
+                  </label>
+                  <input id="company" className="form__input" value={profile.company} onChange={handleChange("company")} />
+                </div>
+                <div className="form__group">
+                  <label className="form__label" htmlFor="timezone">
+                    Timezone
+                  </label>
+                  <select id="timezone" className="form__select" value={profile.timezone} onChange={handleChange("timezone")}>
+                    <option value="UTC">UTC</option>
+                    <option value="Eastern Time (UTC-5)">Eastern Time (UTC-5)</option>
+                    <option value="Central Time (UTC-6)">Central Time (UTC-6)</option>
+                    <option value="Pacific Time (UTC-8)">Pacific Time (UTC-8)</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <h3>Account preferences</h3>
+                <p className="card__meta">Configure reporting and dashboard defaults.</p>
+              </div>
+              <div className="form-grid">
+                <div className="form__group">
+                  <label className="form__label" htmlFor="dateFormat">
+                    Date format
+                  </label>
+                  <select id="dateFormat" className="form__select" value={profile.dateFormat} onChange={handleChange("dateFormat")}>
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                  </select>
+                </div>
+                <div className="form__group">
+                  <label className="form__label" htmlFor="reportFrequency">
+                    Default report frequency
+                  </label>
+                  <select
+                    id="reportFrequency"
+                    className="form__select"
+                    value={profile.reportFrequency}
+                    onChange={handleChange("reportFrequency")}
+                  >
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+            </>
           )}
           <div className="settings-footer">
             <button
