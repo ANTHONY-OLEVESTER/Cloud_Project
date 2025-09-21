@@ -5,7 +5,11 @@ from pydantic_settings import BaseSettings
 
 
 def _default_cors() -> list[str]:
-    return ["http://localhost:5173", "https://anthony-olevester.github.io"]
+    return [
+        "http://localhost:5173",
+        "https://anthony-olevester.github.io",
+        "https://anthony-olevester.github.io/Cloud_Project"
+    ]
 
 
 class Settings(BaseSettings):

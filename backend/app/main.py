@@ -38,9 +38,12 @@ def healthcheck() -> dict[str, str]:
 
 @app.get("/debug/cors")
 def debug_cors() -> dict[str, object]:
+    import os
     return {
         "cors_origins": settings.cors_origins,
-        "cors_origins_type": type(settings.cors_origins).__name__
+        "cors_origins_type": type(settings.cors_origins).__name__,
+        "env_cors_origins": os.environ.get("CORS_ORIGINS", "NOT_SET"),
+        "all_cors_related_env": {k: v for k, v in os.environ.items() if "CORS" in k.upper()}
     }
 
 
