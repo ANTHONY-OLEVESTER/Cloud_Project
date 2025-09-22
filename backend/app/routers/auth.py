@@ -82,25 +82,49 @@ def migrate_user_profiles(db: Session = Depends(get_db)):
     """One-time migration endpoint to populate missing user profile fields"""
     from sqlalchemy import update
 
-    # Find users with empty profile fields
+    # Get all users for debugging
+    all_users = db.query(models.User).all()
+
+    # Find users with empty profile fields (including empty strings and None)
     users_to_update = db.query(models.User).filter(
         (models.User.timezone.is_(None)) |
         (models.User.date_format.is_(None)) |
-        (models.User.report_frequency.is_(None))
+        (models.User.report_frequency.is_(None)) |
+        (models.User.first_name.is_(None)) |
+        (models.User.last_name.is_(None)) |
+        (models.User.timezone == '') |
+        (models.User.date_format == '') |
+        (models.User.report_frequency == '') |
+        (models.User.first_name == '') |
+        (models.User.last_name == '')
     ).all()
 
     updated_count = 0
+    debug_info = []
+
+    for user in all_users:
+        user_debug = {
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "timezone": user.timezone,
+            "date_format": user.date_format,
+            "report_frequency": user.report_frequency,
+            "full_name": user.full_name
+        }
+        debug_info.append(user_debug)
+
     for user in users_to_update:
         updates = {}
-        if user.timezone is None:
+        if user.timezone is None or user.timezone == '':
             updates['timezone'] = 'UTC'
-        if user.date_format is None:
+        if user.date_format is None or user.date_format == '':
             updates['date_format'] = 'MM/DD/YYYY'
-        if user.report_frequency is None:
+        if user.report_frequency is None or user.report_frequency == '':
             updates['report_frequency'] = 'Weekly'
 
         # If first_name and last_name are empty, try to split full_name
-        if user.first_name is None and user.last_name is None and user.full_name:
+        if (user.first_name is None or user.first_name == '') and (user.last_name is None or user.last_name == '') and user.full_name:
             name_parts = user.full_name.strip().split(' ', 1)
             updates['first_name'] = name_parts[0]
             if len(name_parts) > 1:
@@ -115,4 +139,9 @@ def migrate_user_profiles(db: Session = Depends(get_db)):
             updated_count += 1
 
     db.commit()
-    return {"message": f"Successfully updated {updated_count} user profiles with default values"}
+    return {
+        "message": f"Successfully updated {updated_count} user profiles with default values",
+        "total_users": len(all_users),
+        "users_needing_update": len(users_to_update),
+        "debug_users": debug_info
+    }
