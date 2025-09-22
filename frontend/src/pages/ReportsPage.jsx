@@ -8,6 +8,17 @@ export default function ReportsPage() {
   const { data: summary, isLoading: summaryLoading } = useDashboard();
   const { data: evaluations = [], isLoading: evaluationsLoading } = useEvaluations();
 
+  const totalPolicies = summary?.summary.total_policies ?? 0;
+  const compliantPolicies = summary?.summary.compliant ?? 0;
+  const nonCompliantPolicies = summary?.summary.non_compliant ?? 0;
+  const pendingPolicies = summary?.summary.unknown ?? 0;
+
+  const recentEvaluations = useMemo(() => {
+    return [...evaluations]
+      .sort((a, b) => new Date(b.last_checked_at) - new Date(a.last_checked_at))
+      .slice(0, 8);
+  }, [evaluations]);
+
   const handleExportReport = () => {
     const reportData = {
       reportType: "Security Compliance Report",
@@ -78,17 +89,6 @@ export default function ReportsPage() {
   if (summaryLoading || evaluationsLoading) {
     return <div>Loading reports…</div>;
   }
-
-  const totalPolicies = summary?.summary.total_policies ?? 0;
-  const compliantPolicies = summary?.summary.compliant ?? 0;
-  const nonCompliantPolicies = summary?.summary.non_compliant ?? 0;
-  const pendingPolicies = summary?.summary.unknown ?? 0;
-
-  const recentEvaluations = useMemo(() => {
-    return [...evaluations]
-      .sort((a, b) => new Date(b.last_checked_at) - new Date(a.last_checked_at))
-      .slice(0, 8);
-  }, [evaluations]);
 
   return (
     <div>
