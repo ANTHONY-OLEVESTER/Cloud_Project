@@ -40,8 +40,8 @@ async function request(path, options = {}) {
   });
 
   if (!response.ok) {
-    // Handle 401 Unauthorized - clear token and redirect to login
-    if (response.status === 401) {
+    // Handle 401 Unauthorized - clear token and redirect to login (but not for auth endpoints)
+    if (response.status === 401 && !path.includes('/auth/')) {
       window.localStorage.removeItem("cloud_guard_token");
       // Redirect to login if not already there
       if (!window.location.pathname.includes('/login')) {
