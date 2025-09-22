@@ -75,3 +75,44 @@ def update_user_profile(
     current_user: models.User = Depends(get_current_user)
 ):
     return crud.update_user(db, user=current_user, user_update=profile_update)
+
+
+@router.post("/migrate-profiles")
+def migrate_user_profiles(db: Session = Depends(get_db)):
+    """One-time migration endpoint to populate missing user profile fields"""
+    from sqlalchemy import update
+
+    # Find users with empty profile fields
+    users_to_update = db.query(models.User).filter(
+        (models.User.timezone.is_(None)) |
+        (models.User.date_format.is_(None)) |
+        (models.User.report_frequency.is_(None))
+    ).all()
+
+    updated_count = 0
+    for user in users_to_update:
+        updates = {}
+        if user.timezone is None:
+            updates['timezone'] = 'UTC'
+        if user.date_format is None:
+            updates['date_format'] = 'MM/DD/YYYY'
+        if user.report_frequency is None:
+            updates['report_frequency'] = 'Weekly'
+
+        # If first_name and last_name are empty, try to split full_name
+        if user.first_name is None and user.last_name is None and user.full_name:
+            name_parts = user.full_name.strip().split(' ', 1)
+            updates['first_name'] = name_parts[0]
+            if len(name_parts) > 1:
+                updates['last_name'] = name_parts[1]
+            else:
+                updates['last_name'] = ''
+
+        if updates:
+            db.execute(
+                update(models.User).where(models.User.id == user.id).values(**updates)
+            )
+            updated_count += 1
+
+    db.commit()
+    return {"message": f"Successfully updated {updated_count} user profiles with default values"}
