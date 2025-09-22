@@ -186,6 +186,27 @@ export default function SettingsPage() {
             >
               {updateProfileMutation.isPending ? "Saving..." : "Save changes"}
             </button>
+            <button
+              className="button"
+              type="button"
+              style={{ marginLeft: "12px", backgroundColor: "#f59e0b" }}
+              onClick={async () => {
+                try {
+                  const response = await fetch('https://cloudproject-production-55e3.up.railway.app/api/auth/migrate-profiles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                  });
+                  const result = await response.json();
+                  setSaveMessage("Profile data migrated! Refreshing...");
+                  setTimeout(() => window.location.reload(), 1500);
+                } catch (error) {
+                  setSaveMessage("Migration failed. Try again later.");
+                  console.error('Migration error:', error);
+                }
+              }}
+            >
+              Fix Profile Data
+            </button>
             {saveMessage && (
               <div
                 style={{
