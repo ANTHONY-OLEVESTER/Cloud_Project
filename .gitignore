@@ -1,9 +1,8 @@
 __pycache__/*.pyc
 *.py[cod]
 *.db
-.env
-.env.*
 cloud_guard.db
 node_modules/
 dist/
 *.pyc
+config.bat
