@@ -177,7 +177,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section className="card">
+      <section className="card" style={{marginBottom: '32px'}}>
         <div className="card__title">Cloud provider status</div>
         <div style={{ display: "grid", gap: "16px" }}>
           {providerBreakdown.map((provider) => (

@@ -134,7 +134,7 @@ export default function ReportsPage() {
         <ul className="timeline">
           {recentEvaluations.map((evaluation) => (
             <li key={evaluation.id} className={`timeline__item timeline__item--${evaluation.status.replace('_', '-')}`}>
-              <div>
+              <div className="card__title-block">
                 <strong>{evaluation.policy?.name ?? "Unnamed policy"}</strong>
                 <span className="card__meta">{evaluation.account?.display_name ?? evaluation.account?.provider}</span>
               </div>

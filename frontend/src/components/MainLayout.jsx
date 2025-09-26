@@ -287,7 +287,7 @@ export default function MainLayout() {
             </div>
             <div className="topbar__user">
               <div className="topbar__avatar">A</div>
-              <div>
+              <div className="card__title-block" style={{gap: 0}}>
                 <strong>Admin User</strong>
                 <span>Security Ops</span>
               </div>

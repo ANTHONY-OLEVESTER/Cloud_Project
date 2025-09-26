@@ -112,7 +112,7 @@ export default function LoginPage() {
                 />
                 Remember me
               </label>
-              <button type="button" className="auth-card__link">
+              <button type="button" className="forgot-password">
                 Forgot password?
               </button>
             </div>

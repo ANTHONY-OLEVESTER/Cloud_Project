@@ -1,4 +1,4 @@
-__pycache__/
+__pycache__/*.pyc
 *.py[cod]
 *.db
 .env
@@ -6,3 +6,4 @@ __pycache__/
 cloud_guard.db
 node_modules/
 dist/
+*.pyc

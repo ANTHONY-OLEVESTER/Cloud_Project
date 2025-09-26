@@ -142,7 +142,7 @@ export default function PolicyViewPage() {
         </div>
       </section>
 
-      <section className="card">
+      <section className="card" style={{marginBottom: '32px'}}>
         <div className="card__title">Policy Details</div>
         <div className="policy-details">
           <div className="detail-row">
