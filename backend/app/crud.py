@@ -296,3 +296,273 @@ def seed_demo_data(db: Session, *, dataset: Iterable[dict]) -> None:
             db.commit()
         except IntegrityError:
             db.rollback()
+
+
+# ===========================
+# Policy CRUD Operations
+# ===========================
+
+def get_policies(db: Session, skip: int = 0, limit: int = 100) -> list[models.Policy]:
+    """Get all policies with optional pagination."""
+    return db.query(models.Policy).offset(skip).limit(limit).all()
+
+
+def get_policy(db: Session, policy_id: int) -> Optional[models.Policy]:
+    """Get a specific policy by ID."""
+    return db.query(models.Policy).filter(models.Policy.id == policy_id).first()
+
+
+def get_policy_by_control_id(db: Session, control_id: str, provider: str) -> Optional[models.Policy]:
+    """Get a policy by control ID and provider."""
+    return db.query(models.Policy).filter(
+        models.Policy.control_id == control_id,
+        models.Policy.provider == provider
+    ).first()
+
+
+def create_policy(db: Session, policy_in: schemas.PolicyCreate) -> models.Policy:
+    """Create a new policy."""
+    # Check if policy with same control_id and provider already exists
+    existing_policy = get_policy_by_control_id(db, policy_in.control_id, policy_in.provider)
+    if existing_policy:
+        raise ValueError(f"Policy with control_id {policy_in.control_id} already exists for {policy_in.provider}")
+    
+    policy_data = policy_in.model_dump()
+    
+    # Convert date string to date object if needed
+    if policy_data.get("last_reviewed") and isinstance(policy_data["last_reviewed"], str):
+        from datetime import date
+        policy_data["last_reviewed"] = date.fromisoformat(policy_data["last_reviewed"])
+    
+    db_policy = models.Policy(**policy_data)
+    db.add(db_policy)
+    db.commit()
+    db.refresh(db_policy)
+    return db_policy
+
+
+def update_policy(
+    db: Session,
+    policy_id: int,
+    policy_in: schemas.PolicyUpdate
+) -> Optional[models.Policy]:
+    """Update an existing policy."""
+    db_policy = get_policy(db, policy_id)
+    if not db_policy:
+        return None
+    
+    update_data = policy_in.model_dump(exclude_unset=True)
+    
+    # Convert date string to date object if needed
+    if "last_reviewed" in update_data and update_data["last_reviewed"]:
+        if isinstance(update_data["last_reviewed"], str):
+            from datetime import date
+            update_data["last_reviewed"] = date.fromisoformat(update_data["last_reviewed"])
+    
+    for field, value in update_data.items():
+        setattr(db_policy, field, value)
+    
+    db_policy.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(db_policy)
+    return db_policy
+
+
+def delete_policy(db: Session, policy_id: int) -> bool:
+    """Delete a policy."""
+    db_policy = get_policy(db, policy_id)
+    if not db_policy:
+        return False
+    
+    db.delete(db_policy)
+    db.commit()
+    return True
+
+
+# ===========================
+# Policy Evaluation CRUD Operations
+# ===========================
+
+def get_evaluations(db: Session, skip: int = 0, limit: int = 1000) -> list[models.PolicyEvaluation]:
+    """Get all policy evaluations with optional pagination."""
+    return db.query(models.PolicyEvaluation).offset(skip).limit(limit).all()
+
+
+def get_evaluation(db: Session, evaluation_id: int) -> Optional[models.PolicyEvaluation]:
+    """Get a specific evaluation by ID."""
+    return db.query(models.PolicyEvaluation).filter(
+        models.PolicyEvaluation.id == evaluation_id
+    ).first()
+
+
+def get_evaluation_by_policy_account(
+    db: Session,
+    policy_id: int,
+    account_id: int
+) -> Optional[models.PolicyEvaluation]:
+    """Get an evaluation by policy and account."""
+    return db.query(models.PolicyEvaluation).filter(
+        models.PolicyEvaluation.policy_id == policy_id,
+        models.PolicyEvaluation.account_id == account_id
+    ).first()
+
+
+def create_evaluation(
+    db: Session,
+    evaluation_in: schemas.EvaluationCreate
+) -> models.PolicyEvaluation:
+    """Create a new policy evaluation."""
+    # Check if evaluation already exists
+    existing_evaluation = get_evaluation_by_policy_account(
+        db, evaluation_in.policy_id, evaluation_in.account_id
+    )
+    if existing_evaluation:
+        raise ValueError(
+            f"Evaluation already exists for policy {evaluation_in.policy_id} "
+            f"and account {evaluation_in.account_id}"
+        )
+    
+    db_evaluation = models.PolicyEvaluation(**evaluation_in.model_dump())
+    db.add(db_evaluation)
+    db.commit()
+    db.refresh(db_evaluation)
+    return db_evaluation
+
+
+def update_evaluation(
+    db: Session,
+    evaluation_id: int,
+    evaluation_in: schemas.EvaluationUpdate
+) -> Optional[models.PolicyEvaluation]:
+    """Update an existing evaluation."""
+    db_evaluation = get_evaluation(db, evaluation_id)
+    if not db_evaluation:
+        return None
+    
+    update_data = evaluation_in.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(db_evaluation, field, value)
+    
+    db_evaluation.last_checked_at = datetime.utcnow()
+    db.commit()
+    db.refresh(db_evaluation)
+    return db_evaluation
+
+
+def delete_evaluation(db: Session, evaluation_id: int) -> bool:
+    """Delete an evaluation."""
+    db_evaluation = get_evaluation(db, evaluation_id)
+    if not db_evaluation:
+        return False
+    
+    db.delete(db_evaluation)
+    db.commit()
+    return True
+
+
+# ===========================
+# Cloud Account CRUD Operations
+# ===========================
+
+def get_accounts(db: Session, skip: int = 0, limit: int = 100) -> list[models.CloudAccount]:
+    """Get all cloud accounts."""
+    return db.query(models.CloudAccount).offset(skip).limit(limit).all()
+
+
+def get_account(db: Session, account_id: int) -> Optional[models.CloudAccount]:
+    """Get a specific account by ID."""
+    return db.query(models.CloudAccount).filter(models.CloudAccount.id == account_id).first()
+
+
+def create_account(
+    db: Session,
+    account_in: schemas.CloudAccountCreate
+) -> models.CloudAccount:
+    """Create a new cloud account."""
+    # Check if account already exists
+    existing = db.query(models.CloudAccount).filter(
+        models.CloudAccount.provider == account_in.provider,
+        models.CloudAccount.external_id == account_in.external_id
+    ).first()
+    
+    if existing:
+        raise ValueError(
+            f"Account with external_id {account_in.external_id} "
+            f"already exists for {account_in.provider}"
+        )
+    
+    db_account = models.CloudAccount(**account_in.model_dump())
+    db.add(db_account)
+    db.commit()
+    db.refresh(db_account)
+    return db_account
+
+
+def update_account(
+    db: Session,
+    account_id: int,
+    account_in: schemas.CloudAccountUpdate
+) -> Optional[models.CloudAccount]:
+    """Update an existing cloud account."""
+    db_account = get_account(db, account_id)
+    if not db_account:
+        return None
+    
+    update_data = account_in.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(db_account, field, value)
+    
+    db_account.updated_at = datetime.utcnow()
+    db.commit()
+    db.refresh(db_account)
+    return db_account
+
+
+def delete_account(db: Session, account_id: int) -> bool:
+    """Delete a cloud account."""
+    db_account = get_account(db, account_id)
+    if not db_account:
+        return False
+    
+    db.delete(db_account)
+    db.commit()
+    return True
+
+
+# ===========================
+# Notification CRUD Operations
+# ===========================
+
+def get_notifications(db: Session, skip: int = 0, limit: int = 100) -> list[models.Notification]:
+    """Get all notifications."""
+    return db.query(models.Notification).order_by(
+        models.Notification.created_at.desc()
+    ).offset(skip).limit(limit).all()
+
+
+def create_notification(
+    db: Session,
+    notification_in: schemas.NotificationCreate
+) -> models.Notification:
+    """Create a new notification."""
+    db_notification = models.Notification(**notification_in.model_dump())
+    db.add(db_notification)
+    db.commit()
+    db.refresh(db_notification)
+    return db_notification
+
+
+def mark_notification_read(db: Session, notification_id: int) -> Optional[models.Notification]:
+    """Mark a notification as read."""
+    db_notification = db.query(models.Notification).filter(
+        models.Notification.id == notification_id
+    ).first()
+    
+    if not db_notification:
+        return None
+    
+    db_notification.is_read = True
+    db.commit()
+    db.refresh(db_notification)
+    return db_notification
+

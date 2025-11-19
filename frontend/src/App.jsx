@@ -22,7 +22,7 @@ export default function App() {
           <Route path="policies" element={<PoliciesPage />} />
           <Route path="policies/:policyId" element={<PolicyViewPage />} />
           <Route path="reports" element={<ReportsPage />} />
-          <Route path="services/:providerId" element={<ServiceDetailsPage />} />
+          <Route path="connections/services/:providerId" element={<ServiceDetailsPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Route>

@@ -12,6 +12,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    Date,
     UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -41,6 +42,7 @@ class PolicySeverity(str, enum.Enum):
 class ComplianceStatus(str, enum.Enum):
     COMPLIANT = "compliant"
     NON_COMPLIANT = "non_compliant"
+    WARNING = "warning"
     UNKNOWN = "unknown"
 
 
@@ -76,8 +78,19 @@ class CloudAccount(Base):
     external_id: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[AccountStatus] = mapped_column(Enum(AccountStatus), default=AccountStatus.PENDING)
+    
+    # Connection details
+    access_method: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    credential: Mapped[str | None] = mapped_column(Text, nullable=True)
+    service_email: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    tenant_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    sync_frequency: Mapped[str] = mapped_column(String(50), default="Daily")
+    auto_sync: Mapped[bool] = mapped_column(Boolean, default=True)
+    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    
     owner_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     owner: Mapped[User | None] = relationship("User", back_populates="accounts")
     evaluations: Mapped[list[PolicyEvaluation]] = relationship(
@@ -96,6 +109,22 @@ class Policy(Base):
     category: Mapped[str] = mapped_column(String(255), nullable=False)
     severity: Mapped[PolicySeverity] = mapped_column(Enum(PolicySeverity), default=PolicySeverity.MEDIUM)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    
+    # Extended policy fields
+    policy_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    scope_level: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    scope_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    scope_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    compliance_status: Mapped[ComplianceStatus] = mapped_column(
+        Enum(ComplianceStatus), default=ComplianceStatus.UNKNOWN
+    )
+    affected_resources: Mapped[int] = mapped_column(Integer, default=0)
+    last_reviewed: Mapped[datetime | None] = mapped_column(Date, nullable=True)
+    policy_content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    tags: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     evaluations: Mapped[list[PolicyEvaluation]] = relationship(
         "PolicyEvaluation", back_populates="policy", cascade="all, delete-orphan"
@@ -112,6 +141,7 @@ class PolicyEvaluation(Base):
     status: Mapped[ComplianceStatus] = mapped_column(Enum(ComplianceStatus), default=ComplianceStatus.UNKNOWN)
     last_checked_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     findings: Mapped[str | None] = mapped_column(Text, nullable=True)
+    resource_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     policy: Mapped[Policy] = relationship("Policy", back_populates="evaluations")
     account: Mapped[CloudAccount] = relationship("CloudAccount", back_populates="evaluations")
