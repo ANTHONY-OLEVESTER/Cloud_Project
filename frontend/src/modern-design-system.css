@@ -4688,6 +4688,19 @@ width: 40px;
   box-shadow: var(--shadow-sm);
 }
 
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.button svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .metrics-grid {
@@ -4715,3 +4728,4 @@ width: 40px;
     align-items: flex-start;
   }
 }
+
