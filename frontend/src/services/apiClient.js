@@ -1,47 +1,43 @@
-const DEFAULT_API = "http://localhost:8000/api";
-const API_BASE_URL = (import.meta.env.VITE_API_URL ?? DEFAULT_API).replace(/\/$/, "");
+import axios from 'axios';
 
-function buildUrl(path) {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const base = `${API_BASE_URL}/`;
-  return new URL(normalizedPath, base).toString();
+// 1. Get the base URL from environment
+// We handle both cases: with or without trailing slash
+let baseURL = import.meta.env.VITE_API_URL || '/api';
+
+// 2. SAFETY FIX: Remove any trailing slash from the base URL to prevent double-slashes
+if (baseURL.endsWith('/')) {
+  baseURL = baseURL.slice(0, -1);
 }
 
-async function request(path, options = {}) {
-  const token = window.localStorage?.getItem("cloud_guard_token");
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers ?? {}),
-  };
+// 3. Create the Axios instance
+// We export it as a NAMED export ({ apiClient }) to match your hooks.js
+export const apiClient = axios.create({
+  baseURL: baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-  if (token && !("Authorization" in headers)) {
-    headers.Authorization = `Bearer ${token}`;
+// 4. Request Interceptor (Optional)
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = window.localStorage.getItem("cloud_guard_token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+
+// 5. Response Interceptor (Better error handling)
+apiClient.interceptors.response.use(
+  (response) => response.data, // Return data directly to match common React Query patterns
+  (error) => {
+    console.error(`API Error on ${error.config?.url}:`, error.response?.data || error.message);
+    return Promise.reject(error);
   }
-
-  const response = await fetch(buildUrl(path), {
-    ...options,
-    headers,
-  });
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    const error = new Error(errorBody.detail ?? "Request failed");
-    error.status = response.status;
-    error.body = errorBody;
-    throw error;
-  }
-
-  if (response.status === 204) {
-    return null;
-  }
-
-  return response.json();
-}
-
-export const apiClient = {
-  get: (path) => request(path),
-  post: (path, body) => request(path, { method: "POST", body: JSON.stringify(body) }),
-  put: (path, body) => request(path, { method: "PUT", body: JSON.stringify(body) }),
-  patch: (path, body) => request(path, { method: "PATCH", body: JSON.stringify(body) }),
-  delete: (path) => request(path, { method: "DELETE" }),
-};
+);

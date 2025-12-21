@@ -58,6 +58,30 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "category": "Identity",
                 "severity": models.PolicySeverity.CRITICAL,
                 "description": "Ensure root account has MFA enabled.",
+                "policy_content": """{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyAllExceptListedIfNoMFA",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:CreateVirtualMFADevice",
+        "iam:EnableMFADevice",
+        "iam:GetUser",
+        "iam:ListMFADevices",
+        "iam:ListVirtualMFADevices",
+        "iam:ResyncMFADevice",
+        "sts:GetSessionToken"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}""",
             },
         },
         {
@@ -69,6 +93,43 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "category": "Storage",
                 "severity": models.PolicySeverity.HIGH,
                 "description": "Disallow public S3 buckets.",
+                "policy_content": """{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyPublicS3Buckets",
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutBucketPublicAccessBlock",
+        "s3:PutAccountPublicAccessBlock"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:PublicAccessBlockConfiguration": "BlockPublicAcls,BlockPublicPolicy,IgnorePublicAcls,RestrictPublicBuckets"
+        }
+      }
+    },
+    {
+      "Sid": "DenyPublicACLs",
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutObjectAcl",
+        "s3:PutBucketAcl"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "s3:x-amz-acl": [
+            "public-read",
+            "public-read-write",
+            "authenticated-read"
+          ]
+        }
+      }
+    }
+  ]
+}""",
             },
         },
         {
@@ -80,6 +141,45 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "category": "Governance",
                 "severity": models.PolicySeverity.MEDIUM,
                 "description": "Maintain Azure secure score of at least 70.",
+                "policy_content": """{
+  "properties": {
+    "displayName": "Monitor Azure Secure Score",
+    "policyType": "Custom",
+    "mode": "All",
+    "description": "Monitors and alerts when Secure Score falls below threshold",
+    "metadata": {
+      "category": "Security Center",
+      "version": "1.0.0"
+    },
+    "parameters": {
+      "minimumSecureScore": {
+        "type": "Integer",
+        "metadata": {
+          "displayName": "Minimum Secure Score",
+          "description": "Minimum acceptable secure score percentage"
+        },
+        "defaultValue": 70
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Security/secureScores"
+          },
+          {
+            "field": "Microsoft.Security/secureScores/score.percentage",
+            "less": "[parameters('minimumSecureScore')]"
+          }
+        ]
+      },
+      "then": {
+        "effect": "audit"
+      }
+    }
+  }
+}""",
             },
         },
         {
@@ -91,6 +191,18 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "category": "Identity",
                 "severity": models.PolicySeverity.HIGH,
                 "description": "Ensure no active root accounts exist.",
+                "policy_content": """{
+  "constraint": "iam.allowedPolicyMemberDomains",
+  "listPolicy": {
+    "allowedValues": [
+      "C0abc1234",
+      "C0def5678"
+    ],
+    "suggestedValue": "C0abc1234"
+  },
+  "updateTime": "2024-01-18T09:15:00Z",
+  "etag": "BwXhFHFZfn2="
+}""",
             },
         },
         {
@@ -99,6 +211,7 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "policy_id": 1,
                 "account_id": 1,
                 "status": models.ComplianceStatus.NON_COMPLIANT,
+                "resource_id": "arn:aws:iam::123456789012:root",
                 "findings": "Root account missing MFA.",
                 "last_checked_at": now - timedelta(days=1),
             },
@@ -109,6 +222,7 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "policy_id": 2,
                 "account_id": 1,
                 "status": models.ComplianceStatus.COMPLIANT,
+                "resource_id": "arn:aws:s3:::prod-data-bucket",
                 "findings": "All buckets private.",
                 "last_checked_at": now - timedelta(hours=5),
             },
@@ -119,6 +233,7 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "policy_id": 3,
                 "account_id": 2,
                 "status": models.ComplianceStatus.UNKNOWN,
+                "resource_id": "/subscriptions/12345678-1234-1234-1234-123456789012",
                 "findings": "Awaiting latest secure score scan.",
                 "last_checked_at": now - timedelta(days=2),
             },
@@ -129,16 +244,38 @@ def demo_records(*, password_hasher) -> list[dict]:
                 "policy_id": 4,
                 "account_id": 3,
                 "status": models.ComplianceStatus.NON_COMPLIANT,
+                "resource_id": "organizations/123456789/serviceAccounts/root-admin@gcp-org.iam.gserviceaccount.com",
                 "findings": "Root project user detected.",
                 "last_checked_at": now - timedelta(hours=16),
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "Critical policy violation",
+                "message": "AWS Root MFA Enabled is failing on account 123456789012.",
+                "type": models.NotificationType.POLICY_VIOLATION,
+                "created_at": now - timedelta(hours=2, minutes=15),
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "Azure connector pending",
+                "message": "Azure Root is waiting for admin consent to finalize the sync.",
+                "type": models.NotificationType.ACCOUNT_SYNC,
+                "created_at": now - timedelta(hours=1, minutes=5),
+            },
+        },
+        {
+            "model": models.Notification,
+            "data": {
+                "title": "New compliance report ready",
+                "message": "Download the latest tri-cloud readiness assessment from the reports area.",
+                "type": models.NotificationType.BUILD_COMPLETE,
+                "created_at": now - timedelta(minutes=25),
             },
         },
     ]
 
     return records
-
-
-
-
-
-

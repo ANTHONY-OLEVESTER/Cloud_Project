@@ -3,184 +3,271 @@
 /* ========================================= */
 
 .auth-brand-icon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    width: 48px;
+    height: 48px;
+    background: var(--accent-gradient);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-inverse);
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: var(--shadow-sm);
 }
 
 .auth-brand {
-  display: flex !important;
-  align-items: center !important;
-  gap: 16px !important;
-  color: var(--text-strong) !important;
+    /* Kept !important to maintain strong styling, but removing it often helps responsiveness */
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    color: var(--text-strong) !important;
 }
 
 .auth-brand-text {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* This centers the text content */
 }
 
 .auth-brand-text strong {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1a202c;
-  margin-bottom: 4px;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin-bottom: 4px;
 }
 
 .auth-brand-text span {
-  color: #718096;
-  font-size: 14px;
-  font-weight: 500;
+    color: var(--text-muted);
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .auth-card {
-  background: #ffffff !important;
-  border: none !important;
-  border-radius: 24px !important;
-  padding: 48px 40px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 32px !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    background: var(--surface-card) !important;
+    border: 1px solid var(--border-soft) !important;
+    border-radius: 24px !important;
+    /* Reduced padding slightly for better fit on medium screens */
+    padding: 40px 40px !important; 
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 32px !important;
+    box-shadow: var(--shadow-lg) !important;
+    /* Ensure it fills its container */
+    width: 100%; 
 }
 
 .auth-card__header h1 {
-  font-size: 32px !important;
-  font-weight: 700 !important;
-  color: #1a202c !important;
-  margin: 0 !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    color: var(--text-strong) !important;
+    margin: 0 !important;
 }
 
 .auth-card__header p {
-  color: #4a5568 !important;
-  font-size: 16px !important;
-  line-height: 1.6 !important;
-  margin: 12px 0 0 !important;
+    color: var(--text-muted) !important;
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+    margin: 12px 0 0 !important;
 }
 
 .form__input {
-  background: #f7fafc !important;
-  border: 2px solid #e2e8f0 !important;
-  border-radius: 12px !important;
-  padding: 16px 20px !important;
-  color: #2d3748 !important;
-  font-size: 16px !important;
-  transition: all 0.2s ease !important;
+    background: var(--surface-muted) !important;
+    border: 2px solid var(--border-soft) !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important;
+    color: var(--text-strong) !important;
+    font-size: 16px !important;
+    transition: all 0.2s ease !important;
+    /* CRITICAL FIX: Ensure inputs use all available width */
+    width: 100%; 
+    box-sizing: border-box; 
+    /* Remove !important from dimensions if possible, but keep other !important styles */
 }
 
 .form__input:focus {
-  outline: none !important;
-  border-color: #667eea !important;
-  background: #ffffff !important;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    outline: none !important;
+    border-color: rgba(99, 102, 241, 0.5) !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18) !important;
 }
 
 .form__label {
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  color: #2d3748 !important;
-  margin-bottom: 8px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--text-muted) !important;
+    margin-bottom: 8px !important;
+    display: block !important; /* Ensure label takes full width */
 }
 
 .button {
-  padding: 16px 24px !important;
-  border-radius: 12px !important;
-  border: none !important;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: #ffffff !important;
-  font-weight: 600 !important;
-  font-size: 16px !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.3) !important;
+    padding: 16px 24px !important;
+    border-radius: 12px !important;
+    border: none !important;
+    background: var(--accent-gradient) !important;
+    color: var(--text-inverse) !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: var(--shadow-sm) !important;
+    /* CRITICAL FIX: Ensure buttons use all available width when necessary */
+    width: 100%; 
+    box-sizing: border-box; 
 }
 
 .button:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 20px 25px -5px rgba(102, 126, 234, 0.4) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-lg) !important;
 }
 
 .button:disabled {
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
 }
 
 .auth-card__link {
-  color: #667eea !important;
-  text-decoration: none !important;
-  font-weight: 500 !important;
-  transition: color 0.2s ease !important;
+    /* 1. Reset/Remove Box/Border and Background */
+    border: none;
+    background: transparent; /* Makes the background invisible */
+    box-shadow: none; /* Removes any shadow effects */
+    
+    /* 2. Reset Padding and Margin */
+    padding: 0; /* Remove internal spacing */
+    margin: 0; /* Remove external spacing */
+
+    /* 3. Style the Text */
+    color: var(--text-link, blue); /* Use your desired link color, defaulting to blue */
+    text-decoration: none; /* Optionally remove the underline */
+    font-weight: 400; /* Use normal font weight, unless you want it bold */
+    font-size: 16px; /* Adjust font size as needed, using a common link size */
+
+    /* 4. Ensure it still acts like a clickable element */
+    cursor: pointer;
+    
+    /* Ensure no width-stretching if it inherits from .button */
+    width: auto; 
+    display: inline-block; 
 }
 
+/* Optional: Add a hover effect for better UX */
 .auth-card__link:hover {
-  color: #764ba2 !important;
+    text-decoration: underline; 
 }
+
+
+
 
 .input-with-toggle {
-  position: relative !important;
+    position: relative !important;
+    /* Ensure this container uses full width */
+    width: 100%; 
 }
 
 .input-with-toggle .auth-card__link {
-  position: absolute !important;
-  right: 16px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  font-size: 14px !important;
-  background: none !important;
-  border: none !important;
-  cursor: pointer !important;
-  padding: 4px 8px !important;
-  border-radius: 6px !important;
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    font-size: 16px !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
 }
 
 .input-with-toggle .auth-card__link:hover {
-  background: #f7fafc !important;
+    background: var(--surface-muted) !important;
 }
 
 .auth-card__actions {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  font-size: 14px !important;
-  color: #4a5568 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    font-size: 16px !important;
+    color: var(--text-muted) !important;
 }
 
 .auth-card__checkbox {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-weight: 500 !important;
 }
 
 .auth-card__footer {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-  color: #718096 !important;
-  font-size: 14px !important;
-  line-height: 1.5 !important;
-  text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    color: #718096 !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    text-align: center !important;
 }
 
 .auth-card__footer span:first-child {
-  font-weight: 500 !important;
-  color: #4a5568 !important;
+    font-weight: 500 !important;
+    color: #4a5568 !important;
 }
 
 .auth-panel {
-  background: #ffffff !important;
-  backdrop-filter: blur(20px) !important;
+    background: #ffffff !important;
+    backdrop-filter: blur(20px) !important;
+    
+
 }
 
 .auth-layout {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    
+    zoom: 0.83;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+
+/* --- START OF MEDIA QUERY FIXES --- */
+
+/* The media queries below ensure the form elements are fully responsive */
+
+/* Based on previous media queries you provided, we re-apply responsive fixes */
+@media (max-width: 768px) {
+    /* This rule makes the layout stack vertically */
+    .auth-layout,
+    .auth-layout--split,
+    .auth-layout--reverse {
+        
+        grid-template-columns: 1fr;
+        grid-template-areas: "panel" "visual";
+    }
+
+    .auth-panel {
+        padding: 48px 32px;
+    }
+
+    .auth-card {
+        padding: 32px 28px !important; /* Reduced padding on small screens */
+    }
+
+    .auth-visual {
+        border-radius: 0;
+        min-height: 340px;
+        padding: 48px 32px;
+    }
+}
+
+@media (max-width: 640px) {
+    /* Ensure padding is minimal on very small screens */
+    .auth-panel {
+        padding: 32px 20px;
+    }
+    
+    .auth-card {
+        padding: 24px 20px !important;
+    }
+
+    .auth-visual {
+        padding: 40px 24px;
+    }
 }
