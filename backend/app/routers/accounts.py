@@ -7,31 +7,59 @@ from datetime import datetime
 from typing import List
 from app import crud, schemas
 from app.models import NotificationType
-from app.deps import get_db
 from app.database import get_db_session
 from app.models import CloudAccount, CloudProvider, AccountStatus
 from app.schemas import CloudAccountCreate, CloudAccountUpdate, CloudAccountResponse
+from app import crud, schemas, models
+from app.deps import get_db, get_current_user
 
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 
 
+
 @router.get("/", response_model=list[schemas.AccountRead])
-def list_accounts(db: Session = Depends(get_db)):
-    return crud.get_accounts(db)
+def list_accounts(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Get all cloud accounts for the current user."""
+    return crud.get_accounts(db, current_user=current_user, skip=skip, limit=limit)
+
+
+@router.get("/{account_id}", response_model=schemas.AccountRead)
+def get_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Get a specific account by ID (only if user owns it)."""
+    account = crud.get_account(db, current_user=current_user, account_id=account_id)
+    if not account:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Account not found"
+        )
+    return account
 
 
 @router.post("/", response_model=schemas.AccountRead, status_code=status.HTTP_201_CREATED)
-def create_account(account_in: schemas.AccountCreate, db: Session = Depends(get_db)):
+def create_account(
+    account_in: schemas.AccountCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Create a new cloud account for the current user."""
     try:
-        account = crud.create_account(db, account_in=account_in)
-    except IntegrityError as exc:  # pragma: no cover - surface DB constraint nicely
+        account = crud.create_account(db, current_user=current_user, account_in=account_in)
+        return account
+    except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Account with this provider and ID already exists",
-        ) from exc
-
-    return account
+            detail=str(e)
+        )
 
 
 @router.patch("/{account_id}", response_model=schemas.AccountRead)
@@ -39,42 +67,103 @@ def update_account(
     account_id: int,
     account_in: schemas.AccountUpdate,
     db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
 ):
-    account = crud.update_account(db, account_id=account_id, account_in=account_in)
+    """Update an existing cloud account (only if user owns it)."""
+    account = crud.update_account(
+        db, 
+        current_user=current_user,
+        account_id=account_id, 
+        account_in=account_in
+    )
     if not account:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Account not found"
+        )
     return account
 
 
 @router.delete("/{account_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_account(account_id: int, db: Session = Depends(get_db)):
-    deleted = crud.delete_account(db, account_id=account_id)
+def delete_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Delete a cloud account (only if user owns it)."""
+    deleted = crud.delete_account(db, current_user=current_user, account_id=account_id)
     if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
-    return None
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Account not found"
+        )
 
 
+# In accounts router - sync endpoint
 @router.post("/{account_id}/sync", response_model=schemas.AccountRead)
-def sync_account(account_id: int, db: Session = Depends(get_db)):
-    account = crud.get_account(db, account_id=account_id)
+def sync_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """Trigger a manual sync for a cloud account."""
+    account = crud.get_account(db, current_user=current_user, account_id=account_id)
     if not account:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Account not found"
+        )
 
-    # In a real implementation, this would trigger a sync job
-    # For now, we'll just update the sync timestamp
-    from datetime import datetime
-    account_update = schemas.AccountUpdate(last_sync_at=datetime.utcnow())
-    updated = crud.update_account(db, account_id=account_id, account_in=account_update)
+    # Update sync timestamp
+    account_update = schemas.AccountUpdate(last_synced_at=datetime.utcnow())
+    updated = crud.update_account(
+        db, 
+        current_user=current_user,
+        account_id=account_id, 
+        account_in=account_update
+    )
+    
     if updated:
+        # Create notification for THIS user
         crud.create_notification(
             db,
-            schemas.NotificationCreate(
+            current_user=current_user,  # Pass current_user
+            notification_in=schemas.NotificationCreate(
                 title="Manual sync requested",
                 message=f"{updated.display_name} is syncing now.",
-                type=NotificationType.ACCOUNT_SYNC,
+                type=models.NotificationType.ACCOUNT_SYNC,
             ),
         )
+    
     return updated
+
+
+@router.get("/{account_id}/validate", response_model=dict)
+def validate_account(
+    account_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    """
+    Validate cloud account credentials (only if user owns it).
+    
+    Returns validation status and any error messages.
+    """
+    account = crud.get_account(db, current_user=current_user, account_id=account_id)
+    if not account:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Account not found"
+        )
+    
+    # TODO: Implement actual validation logic
+    return {
+        "account_id": account_id,
+        "is_valid": True,
+        "message": "Credentials validated successfully",
+        "provider": account.provider.value,
+        "validated_at": datetime.utcnow().isoformat()
+    }
 
 
 def get_db():

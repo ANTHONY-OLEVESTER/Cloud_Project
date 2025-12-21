@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/angel/OneDrive/Desktop/cooking/Cloud_Project-full-ui-changes-and-functionality/.venv/lib/python3.12/site-packages/greenlet",
+      "program": "c:/Users/angel/OneDrive/Desktop/cooking/Cloud_Project-full-ui-changes-and-functionality/.venv/lib/python3.12/site-packages/greenlet/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}

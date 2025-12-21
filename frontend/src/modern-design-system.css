@@ -104,9 +104,12 @@
 }
 
 html, body {
-  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  height: 100%;
+  overflow-x: hidden;
 }
-
 body {
   margin: 0;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -3047,19 +3050,64 @@ body.app-transition--exit .auth-layout {
      SIDEBAR - PROFESSIONAL DESIGN
      =========================== */
   
-  .sidebar {
-    width: 280px;
-    background: var(--surface-card);
-    border-right: 1px solid var(--border-soft);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 100;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+
+
+.sidebar {
+  width: 280px;
+  background: var(--surface-card);
+  border-right: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+    transform: translateX(-100%);
+  z-index: 1000;
+  /* Keep the transition for smooth open/close */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+
+/* ➡️ New: Class to hide the sidebar */
+.sidebar--hidden {
+  transform: translateX(-100%);
+}
+  
+    .sidebar--open {
+      transform: translateX(0);
+    }
+.menu-toggle {
+  
+width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted); /* Use a color visible on the topbar */
+  cursor: pointer;
+  margin-right: 1rem;
+  display: flex; /* Must be visible by default for desktop */
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition-base);
+  
+}
+
+.menu-toggle svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.2;
+}
+
+.menu-toggle:hover {
+  background: var(--accent-dark);
+}
+
+/* ➡️ Show the button on mobile/smaller screens */
+
+
+/* Logo Section - (Rest of the original CSS remains the same) */
+/* ... */
   
   /* Logo Section */
   .sidebar__logo {
@@ -3280,24 +3328,33 @@ body.app-transition--exit .auth-layout {
   
   .main-area {
     flex: 1;
-    margin-left: 280px;
+    width: 100%;
+    margin-left: 0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+  overflow-x: hidden;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
+  /* When sidebar is open, shift the main content */
+.app-shell--sidebar-open .main-area {
+  margin-left: 280px; /* Same as sidebar width */
+}
   
   /* ===========================
      TOPBAR - REDESIGNED
      =========================== */
   
   .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     height: 70px;
     background: var(--surface-card) !important;
     border-bottom: 1px solid var(--border-soft);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    
     padding: 0 2rem;
     position: sticky;
     top: 0;
@@ -3382,7 +3439,7 @@ body.app-transition--exit .auth-layout {
     display: flex;
     align-items: center;
     gap: 0.875rem;
-    padding: 0.5rem 1rem;
+    padding: 0.375rem 1rem;
     border-radius: var(--radius-md);
     background: var(--surface-muted);
     border: 1px solid var(--border-soft);
@@ -3414,6 +3471,8 @@ body.app-transition--exit .auth-layout {
     font-weight: 600;
     color: var(--text-strong);
     line-height: 1.2;
+    white-space: nowrap;
+    
   }
   
   .topbar__user span {
@@ -3703,12 +3762,33 @@ body.app-transition--exit .auth-layout {
       padding: 0 1.5rem;
     }
   
-    .topbar__user > div {
-      display: none;
+.topbar__user > div:nth-child(2) {
+        display: none !important;
+    } 
+.topbar__user {
+        width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        gap: 0 !important;
+        justify-content: center;
+        align-items: center;
+        /* Ensure border-radius doesn't cause issues */
+        border-radius: var(--radius-md); 
     }
-  
-    .topbar__logout-text {
-      display: none;
+.topbar__logout {
+        padding: 0 !important;
+        width: 42px !important;
+        height: 42px !important;
+        justify-content: center;
+        align-items: center;
+    } 
+.topbar__logout svg {
+    width: 18px;
+    height: 18px;
+}
+
+.topbar__logout-text  {
+        display: none !important;
     }
   
     .topbar__logout {
@@ -3775,9 +3855,9 @@ body.app-transition--exit .auth-layout {
 
 /* Dashboard Container */
 .dashboard-container {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0 20px 32px;
+  padding: 0px;
 }
 
 /* Loading & Error States */
@@ -4026,6 +4106,7 @@ body.app-transition--exit .auth-layout {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-soft);
   transition: border-color var(--transition-base);
+  align-items: center; /* Add this line */
 }
 
 .metric-item:hover {
@@ -4051,7 +4132,7 @@ body.app-transition--exit .auth-layout {
   border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 600;
-  align-self: flex-start;
+ 
 }
 
 .metric-badge--success {
@@ -4075,7 +4156,7 @@ body.app-transition--exit .auth-layout {
   grid-template-columns: 2fr 1fr;
   gap: 16px;
   margin: 24px 0;
-  align-items: start;
+  align-items: stretch; /* Changed from start to stretch */
 }
 
 @media (max-width: 1024px) {
@@ -4091,7 +4172,9 @@ body.app-transition--exit .auth-layout {
   padding: 20px;
   box-shadow: var(--shadow-sm);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
-  height: fit-content;
+  height: 100%; /* Changed from fit-content to 100% */
+  display: flex; /* Add flex */
+  flex-direction: column; /* Add flex direction */
 }
 
 .chart-card:hover {
@@ -4156,6 +4239,9 @@ body.app-transition--exit .auth-layout {
 .chart-content {
   position: relative;
   min-height: 120px;
+  flex: 1; /* Add this to make it take remaining space */
+  display: flex; /* Add flex */
+  align-items: center; /* Center content vertically */
 }
 
 .chart-content--centered {
@@ -4165,7 +4251,6 @@ body.app-transition--exit .auth-layout {
   gap: 24px;
   flex-wrap: wrap;
 }
-
 /* Trend Chart */
 .trend-chart-wrapper {
   position: relative;
@@ -4595,6 +4680,7 @@ body.app-transition--exit .auth-layout {
 
 /* Card */
 .card {
+  margin-top: 16px;
   background: var(--surface-card);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);

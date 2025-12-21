@@ -359,8 +359,10 @@ class EvaluationUpdate(BaseModel):
 class EvaluationRead(BaseModel):
     """Schema for policy evaluation response."""
     id: int
-    policy_id: int
-    account_id: int
+    # policy_id: int
+    # account_id: int
+    policy: Optional[PolicySummary] = None
+    account: Optional[AccountSummary] = None
     status: str
     last_checked_at: datetime
     findings: Optional[str] = None

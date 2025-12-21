@@ -168,59 +168,7 @@ body.app-transition--exit .app-shell {
   background: transparent;
 }
 
-/* .topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 18px;
-  padding: 26px 36px 16px;
-}
-
-.topbar__left {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-}
-
-.topbar__menu {
-  display: none;
-  padding: 10px;
-  border-radius: var(--radius-sm);
-  border: none;
-  background: var(--surface-muted);
-  box-shadow: var(--shadow-sm);
-  color: var(--text-strong);
-  cursor: pointer;
-}
-
-.topbar__search {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 18px;
-  border-radius: var(--radius-md);
-  background: var(--surface-muted);
-  border: 1px solid var(--border-soft);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
-}
-
-.topbar__search input {
-  border: none;
-  background: transparent;
-  font-size: 0.95rem;
-  color: var(--text-strong);
-  width: 220px;
-}
-
-.topbar__search input:focus {
-  outline: none;
-}
-
-.topbar__right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
+/* 
 
 .icon-button {
   position: relative;
@@ -358,26 +306,7 @@ body.app-transition--exit .app-shell {
   font-size: 0.85rem;
 }
 
-.topbar__user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: var(--radius-md);
-  background: var(--surface-muted);
-  border: 1px solid var(--border-soft);
-}
 
-.topbar__avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--accent-gradient);
-  color: var(--text-inverse);
-  display: grid;
-  place-items: center;
-  font-weight: 600;
-}
 
 .button {
   display: inline-flex;
@@ -430,29 +359,7 @@ body.app-transition--exit .app-shell {
   box-shadow: none;
 }
 
-.topbar__logout {
-  padding: 10px 14px;
-  background: transparent;
-  color: var(--text-muted);
-  box-shadow: none;
-  border: 1px solid transparent;
-}
 
-.topbar__logout:hover {
-  background: rgba(148, 163, 244, 0.18);
-  border-color: rgba(99, 102, 241, 0.22);
-  color: var(--accent-strong);
-}
-
-.topbar__logout svg {
-  width: 20px;
-  height: 20px;
-}
-
-.topbar__logout-text {
-  display: inline;
-  font-weight: 600;
-}
 
 .main-content {
   flex: 1;
@@ -1146,11 +1053,7 @@ textarea.form__input:focus {
 }
 
 /* Responsive */
-@media (max-width: 1200px) {
-  .topbar__logout-text {
-    display: none;
-  }
-}
+
 
 @media (max-width: 1040px) {
   .app-shell {
@@ -1176,17 +1079,6 @@ textarea.form__input:focus {
     display: inline-flex;
   }
 
-  .topbar__menu {
-    display: inline-flex;
-  }
-
-  .topbar__search input {
-    width: 160px;
-  }
-
-  .topbar__logout-text {
-    display: none;
-  }
 }
 
 @media (max-width: 768px) {
@@ -1202,15 +1094,10 @@ textarea.form__input:focus {
     width: 220px;
   }
 
-  .topbar {
-    padding: 20px;
-  }
+
 }
 
 @media (max-width: 520px) {
-  .topbar__search {
-    display: none;
-  }
 
   .connection-card {
     grid-template-columns: 1fr;
@@ -1221,9 +1108,6 @@ textarea.form__input:focus {
     justify-self: flex-start;
   }
 
-  .topbar__right {
-    gap: 12px;
-  }
 
   .button {
     width: 100%;
@@ -2520,7 +2404,9 @@ textarea.form__input:focus {
 
 }
 
-
+.auth-layout--reverse {
+  zoom: 0.7;
+}
 
 
 
@@ -2955,22 +2841,21 @@ textarea.form__input:focus {
 
 
 }
-
-
-
-
-
-
-
+aside[class*="auth-visual"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 .auth-visual__content {
 
 
 
-  position: relative;
-
+  position: relative;    
+  justify-content: center;
 
 
   z-index: 1;
+  height: 100%;
 
 
 
@@ -2987,11 +2872,7 @@ textarea.form__input:focus {
 
 
   gap: 22px;
-
-
-
-  align-items: flex-start;
-
+  align-items: center;
 
 
   text-align: left;
@@ -3010,7 +2891,7 @@ textarea.form__input:focus {
 
 
 
-  font-size: 0.78rem;
+  font-size: 1rem;
 
 
 
@@ -3042,7 +2923,7 @@ textarea.form__input:focus {
 
 
 
-  font-size: clamp(2.2rem, 2.4vw + 1rem, 2.8rem);
+  font-size: clamp(2.5rem, 2.4vw + 1rem, 2.8rem);
 
 
 
@@ -3070,12 +2951,13 @@ textarea.form__input:focus {
 
 
 
-  font-size: 1.05rem;
+  font-size: 1.25rem;
 
 
 
   color: rgba(241, 245, 249, 0.92);
-
+  text-align: center;
+  
 
 
 }
@@ -3144,7 +3026,16 @@ textarea.form__input:focus {
 
 }
 
+.auth-visual {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px !important;
+}
 
+.auth-visual__content {
+    margin: 0 auto !important;
+}
 
 
 
@@ -3308,29 +3199,12 @@ textarea.form__input:focus {
 
 @media (max-width: 1200px) {
 
-  .topbar {
-
-    flex-direction: column;
-
-    align-items: flex-start;
-
-  }
 
 
 
-  .topbar__search {
-
-    width: 100%;
-
-  }
 
 
 
-  .topbar__right {
-
-    align-self: flex-end;
-
-  }
 
 
 
@@ -3473,17 +3347,6 @@ textarea.form__input:focus {
   }
 
 
-
-  .topbar__right {
-
-    align-self: stretch;
-
-    width: 100%;
-
-    justify-content: space-between;
-
-  }
-
 }
 
 
@@ -3593,6 +3456,142 @@ textarea.form__input:focus {
 
 
 }
+/* --- CSS Rules Required for Collapse/Expand to work --- */
 
 
+/* --- End CSS Rules --- */
 
+/* Policy Content Viewer Styles */
+.policy-content-viewer {
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.policy-content-viewer pre {
+  margin: 0;
+  padding: 20px;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #d4d4d4;
+}
+
+.policy-content-viewer code {
+  font-family: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+}
+
+/* Scrollbar styling for code viewer */
+.policy-content-viewer pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.policy-content-viewer pre::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.policy-content-viewer pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.policy-content-viewer pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Card header button styling for copy button */
+.card__header .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.card__header .button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.card__header .button--secondary {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+.card__header .button--secondary:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* Alternative light theme for policy viewer (optional) */
+.policy-content-viewer.light-theme {
+  background: #f5f5f5;
+  border-color: #e0e0e0;
+}
+
+.policy-content-viewer.light-theme pre {
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .policy-content-viewer pre {
+    padding: 16px;
+    font-size: 12px;
+  }
+  
+  .card__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .card__header .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Enhanced card header layout */
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.card__subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Empty state for missing policy content */
+.policy-content-empty {
+  padding: 40px;
+  text-align: center;
+  color: #9ca3af;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.policy-content-empty svg {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  opacity: 0.5;
+}
+
+.policy-content-empty p {
+  margin: 0;
+  font-size: 14px;
+}

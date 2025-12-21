@@ -12,8 +12,18 @@ export default function AuthHero({
   const heroClassName = ["auth-visual", `auth-visual--${align}`, className].filter(Boolean).join(" ");
 
   return (
-    <aside className={heroClassName} style={{ background }} role="presentation">
-      <div className="auth-visual__content">
+    <aside 
+      className={heroClassName} 
+      style={{ 
+        background, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        padding: '0'  // Remove any default padding
+      }} 
+      role="presentation"
+    >
+      <div className="auth-visual__content" style={{ maxWidth: '600px', width: '100%' }}>
         {eyebrow ? <span className="auth-visual__eyebrow">{eyebrow}</span> : null}
         {imageUrl ? (
           <div className="auth-visual__image" aria-hidden="true">
@@ -21,8 +31,8 @@ export default function AuthHero({
             <div className="auth-visual__image-gradient" />
           </div>
         ) : null}
-        <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '16px', color: 'white' }}>{title}</h2>
-        <p style={{ fontSize: '18px', lineHeight: '1.6', marginBottom: '24px', color: 'rgba(255, 255, 255, 0.9)' }}>{subtitle}</p>
+        <h2 style={{ fontSize: '34px', fontWeight: '700', marginBottom: '16px', color: 'white' }}>{title}</h2>
+        <p style={{ fontSize: '20px', lineHeight: '1.6', marginBottom: '24px', color: 'rgba(255, 255, 255, 0.9)' }}>{subtitle}</p>
         {bullets.length ? (
           <ul className="auth-visual__list" style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {bullets.map((item, index) => (

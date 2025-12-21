@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 import { useDashboard, useEvaluations, usePolicies } from "../services/hooks";
 import PageHero from "../components/PageHero";
 import dashboardIllustration from "../assets/illustrations/dashboard-hero.svg";
@@ -583,7 +584,7 @@ function CategoryItem({ rank, name, total, compliant, nonCompliant }) {
 
 function ProviderIcon({ provider }) {
   const sources = {
-    aws: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg",
+    aws: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",  // Use absolute path from public
     azure: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg",
     gcp: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg",
   };

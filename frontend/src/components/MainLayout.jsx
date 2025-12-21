@@ -102,16 +102,16 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [dismissedNotificationIds, setDismissedNotificationIds] = useState(new Set());
 
   const { data: notifications = [] } = useNotifications();
   const markNotificationRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
 
-  useEffect(() => {
-    setSidebarOpen(false);
-  }, [location.pathname]);
+  const handleSidebarToggle = () => {
+    setSidebarOpen((prev) => !prev);
+  };
 
   useEffect(() => {
     setDismissedNotificationIds((prev) => {
@@ -158,7 +158,7 @@ export default function MainLayout() {
 
   return (
     <div className={`app-shell ${sidebarOpen ? "app-shell--sidebar-open" : ""}`}>
-      <aside className={`sidebar ${sidebarOpen ? "sidebar--open" : ""}`}>
+      <aside className={`sidebar ${sidebarOpen ? "sidebar--open" : "sidebar--hidden"}`}>
         <div className="sidebar__logo">
           <div className="sidebar__logo-icon">🛡️</div>
           <div className="sidebar__brand">
@@ -210,6 +210,15 @@ export default function MainLayout() {
 
       <div className="main-area">
         <header className="topbar">
+          <button
+            type="button"
+            className="menu-toggle"
+            onClick={handleSidebarToggle} 
+            aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
+          >
+            {sidebarOpen ? closeIcon : menuIcon} 
+          </button>
+          
           <div className="topbar__right">
             <div className="notification-container">
               <button

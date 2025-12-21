@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   const login = useCallback((value) => {
-    setToken(value || "demo-token");
+    setToken(value);
   }, []);
 
   const logout = useCallback(() => {

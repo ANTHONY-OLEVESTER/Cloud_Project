@@ -50,7 +50,7 @@ const accessMethodOptions = {
 };
 
 const providerIcons = {
-  aws: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg",
+  aws: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
   azure: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg",
   gcp: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg",
 };
@@ -410,9 +410,9 @@ export default function ConnectionsPage() {
                         title="Edit"
                         onClick={() => handleSettings(account)}
                       >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                          <path d="M16.862 3.487a1.875 1.875 0 0 1 2.651 2.651L9.954 15.697a4.5 4.5 0 0 1-1.895 1.13l-3.13.903.903-3.13a4.5 4.5 0 0 1 1.13-1.895l9.908-9.908Z" />
-                          <path d="M18 13.5V19.5A1.5 1.5 0 0 1 16.5 21h-9A1.5 1.5 0 0 1 6 19.5v-9A1.5 1.5 0 0 1 7.5 9h5.25" />
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                          <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
                         </svg>
                       </button>
                       <button

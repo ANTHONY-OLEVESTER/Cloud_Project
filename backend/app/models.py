@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from sqlalchemy.dialects import postgresql
 import enum
 from datetime import datetime
 
@@ -68,6 +68,14 @@ class User(Base):
         "CloudAccount", back_populates="owner", cascade="all, delete-orphan"
     )
 
+    policies: Mapped[list[Policy]] = relationship( 
+        "Policy", back_populates="owner", cascade="all, delete-orphan"
+    )
+
+    notifications: Mapped[list[Notification]] = relationship(
+        "Notification", back_populates="owner", cascade="all, delete-orphan"
+    )
+
 
 class CloudAccount(Base):
     __tablename__ = "cloud_accounts"
@@ -100,7 +108,7 @@ class CloudAccount(Base):
 
 class Policy(Base):
     __tablename__ = "policies"
-    __table_args__ = (UniqueConstraint("provider", "control_id", name="uq_policy_provider_control"),)
+    __table_args__ = (UniqueConstraint("provider", "control_id", "owner_id", name="uq_policy_provider_control_owner"),)  # Updated constraint
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     provider: Mapped[CloudProvider] = mapped_column(Enum(CloudProvider), index=True)
@@ -123,12 +131,16 @@ class Policy(Base):
     policy_content: Mapped[str | None] = mapped_column(Text, nullable=True)
     tags: Mapped[str | None] = mapped_column(String(500), nullable=True)
     
+    owner_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Relationships
     evaluations: Mapped[list[PolicyEvaluation]] = relationship(
         "PolicyEvaluation", back_populates="policy", cascade="all, delete-orphan"
     )
+    owner: Mapped[User] = relationship("User", back_populates="policies") 
 
 
 class PolicyEvaluation(Base):
@@ -156,3 +168,6 @@ class Notification(Base):
     type: Mapped[NotificationType] = mapped_column(Enum(NotificationType), default=NotificationType.BROADCAST)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
+
+    owner_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    owner: Mapped[User] = relationship("User", back_populates="notifications")

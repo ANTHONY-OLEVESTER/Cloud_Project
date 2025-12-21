@@ -1,0 +1,26 @@
+Ignore local virtual environments
+
+.venv
+venv/
+env/
+
+Ignore compiled python files
+
+pycache/
+*.py[cod]
+
+Ignore local vendor bundles (THE CAUSE OF YOUR ERROR)
+
+_vendor/
+vendor/
+backend/app/_vendor/
+backend/_vendor/
+
+Ignore local environment variables
+
+.env
+.env.local
+
+Ignore git folder
+
+.git
