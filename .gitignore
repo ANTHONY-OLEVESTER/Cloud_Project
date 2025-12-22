@@ -6,3 +6,6 @@ __pycache__/
 cloud_guard.db
 node_modules/
 dist/
+.vscode/
+.venv/
+.claude/
