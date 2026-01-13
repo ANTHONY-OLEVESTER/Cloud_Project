@@ -1,0 +1,6 @@
+#frontend
+cd frontend
+npm run dev
+
+#Backend
+cd Backend

@@ -10,6 +10,8 @@ import "../modern-auth.css";
 const HERO_IMAGE =
   "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1400&q=80";
 
+const PROFILE_STORAGE_KEY = "cloud_guard_profile";
+
 export default function SignupPage() {
   const { login: setAuthToken } = useAuth();
   const signup = useSignup();
@@ -50,6 +52,13 @@ export default function SignupPage() {
       {
         onSuccess: (response) => {
           const token = response?.access_token;
+          const storedProfile = {
+            firstName: trimmedFirst,
+            lastName: trimmedLast,
+            company: formState.company.trim(),
+            email: formState.email.trim(),
+          };
+          window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(storedProfile));
           setAuthToken(token);
           runAppTransition("enter", () => navigate("/", { replace: true }));
         },

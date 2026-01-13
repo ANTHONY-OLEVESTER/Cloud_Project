@@ -569,13 +569,12 @@ def create_account(
     account_in: schemas.CloudAccountCreate
 ) -> models.CloudAccount:
     """Create a new cloud account for current user."""
-    # Check if account already exists for this user
+    # Check if account already exists (unique on provider + external_id)
     existing = (
         db.query(models.CloudAccount)
         .filter(
             models.CloudAccount.provider == account_in.provider,
-            models.CloudAccount.external_id == account_in.external_id,
-            models.CloudAccount.owner_id == current_user.id
+            models.CloudAccount.external_id == account_in.external_id
         )
         .first()
     )
@@ -592,8 +591,15 @@ def create_account(
     
     db_account = models.CloudAccount(**account_data)
     db.add(db_account)
-    db.commit()
-    db.refresh(db_account)
+    try:
+        db.commit()
+        db.refresh(db_account)
+    except IntegrityError:
+        db.rollback()
+        raise ValueError(
+            f"Account with external_id {account_in.external_id} "
+            f"already exists for {account_in.provider}"
+        )
     return db_account
 
 

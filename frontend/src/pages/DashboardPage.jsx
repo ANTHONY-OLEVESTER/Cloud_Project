@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useDashboard, useEvaluations, usePolicies } from "../services/hooks";
 import PageHero from "../components/PageHero";
 import dashboardIllustration from "../assets/illustrations/dashboard-hero.svg";
+import { downloadComplianceReport } from "../utils/reportExport";
 
 const TREND_TEMPLATE = [82, 84, 83, 85, 86, 88, 87, 89];
 const VIOLATION_TEMPLATE = [40, 38, 37, 34, 32, 30, 28, 26];
@@ -29,29 +30,7 @@ export default function DashboardPage() {
   const { data: policies = [], isLoading: policyLoading } = usePolicies();
 
   const handleGenerateReport = () => {
-    const reportData = {
-      summary: safeSummary,
-      policies,
-      evaluations,
-      timestamp: new Date().toISOString(),
-      complianceRate,
-      securityScore,
-      criticalFindings,
-      severityBreakdown
-    };
-
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], {
-      type: 'application/json'
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `security-report-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadComplianceReport({ summary: safeSummary, evaluations });
   };
 
   const loading = summaryLoading || evalLoading || policyLoading;

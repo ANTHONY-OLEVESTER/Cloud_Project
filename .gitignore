@@ -1,11 +1,10 @@
 __pycache__/
 *.py[cod]
 *.db
-.env
-.env.*
 cloud_guard.db
 node_modules/
 dist/
 .vscode/
 .venv/
 .claude/
+config.bat

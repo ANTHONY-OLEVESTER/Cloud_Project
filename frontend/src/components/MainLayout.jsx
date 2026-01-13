@@ -97,15 +97,18 @@ const closeIcon = (
   </svg>
 );
 
+const EMPTY_NOTIFICATIONS = [];
+
 export default function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, token } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [dismissedNotificationIds, setDismissedNotificationIds] = useState(new Set());
 
-  const { data: notifications = [] } = useNotifications();
+  const { data } = useNotifications({ enabled: Boolean(token) });
+  const notifications = data ?? EMPTY_NOTIFICATIONS;
   const markNotificationRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
 
