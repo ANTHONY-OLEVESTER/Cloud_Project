@@ -2293,31 +2293,15 @@ body.app-transition--exit .auth-layout {
     animation: fadeIn 0.2s ease;
   }
   
-  .loading-spinner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    background: var(--surface-card);
-    padding: 2rem 3rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-soft);
-    box-shadow: var(--shadow-xl);
-  }
+
   
   .spinner-ring {
-    width: 60px;
+    width: 30px;
     height: 60px;
     animation: rotate 1s linear infinite;
   }
   
-  .spinner-ring circle {
-    stroke: var(--accent-primary);
-    stroke-linecap: round;
-    stroke-dasharray: 125.6;
-    stroke-dashoffset: 125.6;
-    animation: dash 1.5s ease-in-out infinite;
-  }
+
   
   @keyframes rotate {
     to {
@@ -2337,13 +2321,7 @@ body.app-transition--exit .auth-layout {
     }
   }
   
-  .loading-spinner p {
-    color: var(--text-strong);
-    font-size: 0.9375rem;
-    font-weight: 500;
-    margin: 0;
-    white-space: nowrap;
-  }
+
   
   /* Prevent body scroll when overlay is active */
   body:has(.loading-overlay) {
