@@ -219,8 +219,9 @@ export default function PoliciesPage() {
             <svg className="spinner-ring" viewBox="0 0 50 50">
               <circle cx="25" cy="25" r="20" fill="none" strokeWidth="4" />
             </svg>
-            <p>Loading policies and evaluations...</p>
+           
           </div>
+ <p>Loading policies and evaluations...</p>
         </div>
       )}
 

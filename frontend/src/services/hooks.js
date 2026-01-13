@@ -171,11 +171,19 @@ export function useSignup() {
 // ===========================
 // Notifications
 // ===========================
-export function useNotifications() {
+export function useNotifications(options = {}) {
+  const token = window.localStorage.getItem("cloud_guard_token");
   return useQuery({
     queryKey: queryKeys.notifications,
     queryFn: () => apiClient.get("notifications/"),  // Add trailing slash
+    enabled: options.enabled ?? Boolean(token),
     refetchInterval: 30000, // Refetch every 30 seconds
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 401) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 }
 

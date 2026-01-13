@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import PageHero from "../components/PageHero";
 import settingsIllustration from "../assets/illustrations/settings-hero.svg";
@@ -11,13 +11,15 @@ const tabs = [
   { id: "api", label: "API & Integration" },
 ];
 
+const PROFILE_STORAGE_KEY = "cloud_guard_profile";
+
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("account");
   const [profile, setProfile] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john@company.com",
-    company: "Acme Corporation",
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
     timezone: "Eastern Time (UTC-5)",
     dateFormat: "MM/DD/YYYY",
     reportFrequency: "Weekly",
@@ -31,6 +33,17 @@ export default function SettingsPage() {
     if (saveMessage) setSaveMessage("");
   };
 
+  useEffect(() => {
+    const storedProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
+    if (!storedProfile) return;
+    try {
+      const parsed = JSON.parse(storedProfile);
+      setProfile((prev) => ({ ...prev, ...parsed }));
+    } catch (error) {
+      console.warn("Unable to parse stored profile settings.", error);
+    }
+  }, []);
+
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
@@ -40,6 +53,7 @@ export default function SettingsPage() {
       // In a real app, this would be an API call:
       // await apiClient.put('/users/profile', profile);
 
+      window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
       setSaveMessage("Settings saved successfully!");
       setTimeout(() => setSaveMessage(""), 3000);
     } catch (error) {
