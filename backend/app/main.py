@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+from sqlalchemy import inspect, text
 from passlib.context import CryptContext
 
 # Imports
@@ -89,6 +90,29 @@ def create_admin_user(db: Session):
             print("ℹ️  Admin user already exists.")
     except Exception as e:
         print(f"❌ Error creating admin user: {e}")
+
+
+
+def ensure_sqlite_schema() -> None:
+    """Backfill missing sqlite columns for local dev schema drift."""
+    if not engine.url.get_backend_name().startswith("sqlite"):
+        return
+    inspector = inspect(engine)
+    existing_tables = set(inspector.get_table_names())
+    if not existing_tables:
+        return
+    with engine.begin() as conn:
+        for table in Base.metadata.sorted_tables:
+            if table.name not in existing_tables:
+                continue
+            columns = {col["name"] for col in inspector.get_columns(table.name)}
+            for column in table.columns:
+                if column.name in columns:
+                    continue
+                col_type = column.type.compile(dialect=engine.dialect)
+                conn.execute(
+                    text(f"ALTER TABLE {table.name} ADD COLUMN {column.name} {col_type}")
+                )
 
 # ============ DEMO SEED FUNCTION - REMOVE THIS FUNCTION FOR PRODUCTION ============
 def seed_demo_data(db: Session):
@@ -189,6 +213,7 @@ def on_startup() -> None:
         try:
             # 1. Create Tables
             Base.metadata.create_all(bind=engine)
+            ensure_sqlite_schema()
             print("📊 Database tables created.")
 
             # 2. Create Admin User & Seed Data
