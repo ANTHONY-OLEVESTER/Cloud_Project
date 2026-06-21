@@ -2,6 +2,9 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { usePolicies, useEvaluations, useDeletePolicy } from "../services/hooks";
 import { useMemo } from "react";
 
+import PageHeader from "../components/PageHeader";
+import { AlertTriangle, ClipboardList, Layers, ShieldCheck } from "lucide-react";
+
 const statusLabels = {
   compliant: "Compliant",
   non_compliant: "Non-Compliant",
@@ -17,6 +20,13 @@ function derivePolicyStatus(evaluations = []) {
   const allCompliant = evaluations.every(evaluation => evaluation.status === "compliant");
   return allCompliant ? "compliant" : "unknown";
 }
+
+const HERO_IMAGES = {
+  aws: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1400&q=80",
+  azure: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80",
+  gcp: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1400&q=80",
+  default: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=80",
+};
 
 function severityTone(severity) {
   const tones = {
@@ -66,50 +76,56 @@ export default function PolicyViewPage() {
 
   if (!policy) {
     return (
-      <div className="page-header">
-        <div>
-          <h1>Policy Not Found</h1>
-          <p>The requested policy could not be found.</p>
-        </div>
-        <div className="page-header__actions">
+      <PageHeader
+        eyebrow="Policies"
+        title="Policy not found"
+        description="The requested policy could not be located. It may have been removed or reassigned."
+        image={HERO_IMAGES.default}
+        actions={
           <Link to="/policies" className="button">
             Back to Policies
           </Link>
-        </div>
-      </div>
+        }
+      />
     );
   }
 
+  const heroImage = HERO_IMAGES[policy.provider] ?? HERO_IMAGES.default;
+
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1>{policy.name}</h1>
-          <p>{policy.description || "No description available"}</p>
-        </div>
-        <div className="page-header__actions">
-          <Link to="/policies" className="button">
-            Back to Policies
-          </Link>
-          <button 
-            className="button button--primary"
-            onClick={() => navigate(`/policies/${policyId}/edit`)}
-          >
-            Edit Policy
-          </button>
-          <button 
-            className="button button--danger"
-            onClick={handleDelete}
-            disabled={deletePolicy.isPending}
-          >
-            {deletePolicy.isPending ? "Deleting..." : "Delete"}
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={policy.provider?.toUpperCase() ?? "Policy"}
+        title={policy.name}
+        description={policy.description || "No description available"}
+        image={heroImage}
+        actions={
+          <div className="page-hero__inline-actions">
+            <Link to="/policies" className="button button--secondary">
+              Back to Policies
+            </Link>
+            <button
+              className="button button--primary"
+              onClick={() => navigate(`/policies/${policyId}/edit`)}
+            >
+              Edit Policy
+            </button>
+            <button
+              className="button button--danger"
+              onClick={handleDelete}
+              disabled={deletePolicy.isPending}
+            >
+              {deletePolicy.isPending ? "Deleting..." : "Delete"}
+            </button>
+          </div>
+        }
+      />
 
       <section className="stat-grid">
         <div className="stat-card">
-          <div className="stat-card__icon">📊</div>
+          <div className="stat-card__icon" aria-hidden="true">
+            <ShieldCheck size={18} />
+          </div>
           <div className="stat-card__meta">
             <strong>Status</strong>
             <span className={`badge badge--${status.replace("_", "-")}`}>
@@ -118,7 +134,9 @@ export default function PolicyViewPage() {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-card__icon">🎯</div>
+          <div className="stat-card__icon" aria-hidden="true">
+            <ClipboardList size={18} />
+          </div>
           <div className="stat-card__meta">
             <strong>Severity</strong>
             <span className={`chip chip--${severityTone(policy.severity)}`}>
@@ -127,14 +145,18 @@ export default function PolicyViewPage() {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-card__icon">📡</div>
+          <div className="stat-card__icon" aria-hidden="true">
+            <Layers size={18} />
+          </div>
           <div className="stat-card__meta">
             <strong>Resources</strong>
             <span>{resourceCount}</span>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-card__icon">⚠️</div>
+          <div className="stat-card__icon" aria-hidden="true">
+            <AlertTriangle size={18} />
+          </div>
           <div className="stat-card__meta">
             <strong>Violations</strong>
             <span>{violationCount}</span>
