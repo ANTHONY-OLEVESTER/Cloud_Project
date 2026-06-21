@@ -82,6 +82,15 @@ class PolicyCreate(PolicyBase):
     pass
 
 
+class PolicyUpdate(BaseModel):
+    provider: Optional[CloudProvider] = None
+    name: Optional[str] = Field(default=None, min_length=2, max_length=255)
+    control_id: Optional[str] = Field(default=None, min_length=2, max_length=255)
+    category: Optional[str] = Field(default=None, min_length=2, max_length=255)
+    severity: Optional[PolicySeverity] = None
+    description: Optional[str] = None
+
+
 class PolicyRead(PolicyBase):
     id: int
 

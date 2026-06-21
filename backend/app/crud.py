@@ -86,6 +86,29 @@ def get_policies(db: Session) -> list[models.Policy]:
     return list(db.execute(stmt).scalars())
 
 
+def update_policy(db: Session, policy_id: int, policy_in: schemas.PolicyUpdate) -> Optional[models.Policy]:
+    stmt = select(models.Policy).where(models.Policy.id == policy_id)
+    policy = db.execute(stmt).scalar_one_or_none()
+    if not policy:
+        return None
+    
+    for field, value in policy_in.model_dump(exclude_unset=True).items():
+        setattr(policy, field, value)
+    db.commit()
+    db.refresh(policy)
+    return policy
+
+
+def delete_policy(db: Session, policy_id: int) -> bool:
+    stmt = select(models.Policy).where(models.Policy.id == policy_id)
+    policy = db.execute(stmt).scalar_one_or_none()
+    if not policy:
+        return False
+    db.delete(policy)
+    db.commit()
+    return True
+
+
 def get_evaluations(db: Session) -> list[models.PolicyEvaluation]:
     stmt = (
         select(models.PolicyEvaluation)
