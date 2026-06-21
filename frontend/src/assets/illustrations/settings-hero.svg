@@ -1,0 +1,17 @@
+<svg width="360" height="220" viewBox="0 0 360 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Workspace settings illustration">
+  <defs>
+    <linearGradient id="settings-bg" x1="40" y1="36" x2="304" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FB7185"/>
+      <stop offset="1" stop-color="#FACC15"/>
+    </linearGradient>
+  </defs>
+  <rect x="30" y="34" width="300" height="172" rx="32" fill="url(#settings-bg)"/>
+  <circle cx="120" cy="120" r="54" fill="rgba(15,23,42,0.15)"/>
+  <circle cx="120" cy="120" r="30" fill="rgba(248,250,252,0.9)"/>
+  <path d="M120 96L125 105L135 107L128 114L130 124L120 119L110 124L112 114L105 107L115 105L120 96Z" fill="#FB7185"/>
+  <rect x="194" y="84" width="90" height="14" rx="7" fill="rgba(15,23,42,0.25)"/>
+  <rect x="194" y="108" width="76" height="12" rx="6" fill="rgba(15,23,42,0.18)"/>
+  <rect x="194" y="132" width="68" height="12" rx="6" fill="rgba(248,250,252,0.75)"/>
+  <circle cx="260" cy="160" r="12" fill="rgba(248,250,252,0.75)"/>
+  <path d="M255 160L259 164L265 156" stroke="#F97316" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
